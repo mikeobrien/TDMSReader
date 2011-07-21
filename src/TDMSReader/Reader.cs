@@ -72,16 +72,16 @@ namespace TDMSReader
 
         public IEnumerable<object> ReadRawData(long offset, long count, int dataType)
         {
-            return dataType == DataType.String ? GetRawStrings(offset, count) : GetRawFixed(offset, count, dataType);
+            return dataType == DataType.String ? ReadRawStrings(offset, count) : ReadRawFixed(offset, count, dataType);
         }
 
-        private IEnumerable<object> GetRawFixed(long offset, long count, int dataType)
+        private IEnumerable<object> ReadRawFixed(long offset, long count, int dataType)
         {
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
             for (var x = 0; x < count; x++) yield return _valueReader.Read(dataType);
         }
 
-        private IEnumerable<object> GetRawStrings(long offset, long count)
+        private IEnumerable<object> ReadRawStrings(long offset, long count)
         {
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
             var dataOffset = offset + (count * 4);
