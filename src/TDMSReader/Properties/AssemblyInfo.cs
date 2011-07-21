@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TDMSReader")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TDMS Reader")]
+[assembly: AssemblyDescription("Reads NI TDMS files")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("TDMSReader")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCompany("Ultraviolet Catastrophe")]
+[assembly: AssemblyProduct("TDMS Reader")]
+[assembly: AssemblyCopyright("Copyright © 2011 Ultraviolet Catastrophe")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

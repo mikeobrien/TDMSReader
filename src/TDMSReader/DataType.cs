@@ -24,6 +24,11 @@ namespace TDMSReader
         public const int Boolean = 0x00000021;
         public const int TimeStamp = 0x00000044;
 
+        public static long GetArrayLength(int dataType, long size)
+        {
+            return GetLength(dataType) * size;
+        }
+
         public static int GetLength(int dataType)
         {
             switch (dataType)
@@ -44,7 +49,7 @@ namespace TDMSReader
                 case DoubleFloatWithUnit: return 8;
                 case Boolean: return 1;
                 case TimeStamp: return 16;
-                default: throw new Exception("Unknown length for data type " + dataType);
+                default: throw new ArgumentException("Cannot determine size of data type " + dataType, "dataType");
             }
         }
 

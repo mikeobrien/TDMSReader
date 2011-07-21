@@ -56,16 +56,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="ReaderExportTextFile.cs" />
+    <Compile Include="ChannelTests.cs" />
+    <Compile Include="GroupTests.cs" />
+    <Compile Include="FileTests.cs" />
+    <Compile Include="SampleUsage.cs" />
     <Compile Include="ReaderRawDataTests.cs" />
-    <Compile Include="ValueReaderTests.cs" />
+    <Compile Include="BinaryReaderExtensionsTests.cs" />
     <Compile Include="ReaderTestsBase.cs" />
     <Compile Include="ReaderMetadataTests.cs" />
     <Compile Include="ReaderSegmentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Sample.tdms">
+    <None Include="Sample.tdms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

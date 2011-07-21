@@ -4,7 +4,7 @@ namespace TDMSReader.Tests
 {
     public class Constants
     {
-        public const string SampleFile = "Data\\Sample.tdms";
+        public const string SampleFile = "Sample.tdms";
 
         public static Stream CreateStream()
         {

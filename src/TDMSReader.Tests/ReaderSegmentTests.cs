@@ -25,7 +25,7 @@ namespace TDMSReader.Tests
             leadin.Offset.ShouldEqual(0);
             leadin.NextSegmentOffset.ShouldEqual(2132223);
             leadin.RawDataOffset.ShouldEqual(2303);
-            leadin.MetadataOffset.ShouldEqual(Reader.LeadIn.Length);
+            leadin.MetadataOffset.ShouldEqual(Reader.Segment.Length);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace TDMSReader.Tests
             leadin.Offset.ShouldEqual(2132223);
             leadin.NextSegmentOffset.ShouldEqual(4733159);
             leadin.RawDataOffset.ShouldEqual(2133159);
-            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.LeadIn.Length);
+            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.Segment.Length);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace TDMSReader.Tests
             leadin.Offset.ShouldEqual(4733159);
             leadin.NextSegmentOffset.ShouldEqual(7334099);
             leadin.RawDataOffset.ShouldEqual(4734099);
-            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.LeadIn.Length);
+            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.Segment.Length);
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace TDMSReader.Tests
             leadin.Offset.ShouldEqual(7334099);
             leadin.NextSegmentOffset.ShouldEqual(-1);
             leadin.RawDataOffset.ShouldEqual(7340099);
-            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.LeadIn.Length);
+            leadin.MetadataOffset.ShouldEqual(leadin.Offset + Reader.Segment.Length);
         }
 
         [Test]

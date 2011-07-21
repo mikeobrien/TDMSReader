@@ -15,11 +15,11 @@ namespace TDMSReader.Tests
         {
             base.Setup();
             var firstSegment = Reader.ReadFirstSegment();
-            _segmentOneMetadata = Reader.ReadMetadata(firstSegment.MetadataOffset);
+            _segmentOneMetadata = Reader.ReadMetadata(firstSegment);
             _segmentFourMetadata = Reader.ReadMetadata(Reader.ReadSegment(
                                      Reader.ReadSegment(
                                      Reader.ReadSegment(
-                                     firstSegment.NextSegmentOffset).NextSegmentOffset).NextSegmentOffset).MetadataOffset);
+                                     firstSegment.NextSegmentOffset).NextSegmentOffset).NextSegmentOffset));
         }
 
         [Test]
@@ -31,14 +31,26 @@ namespace TDMSReader.Tests
         [Test]
         public void Should_Have_Correct_Object_Names()
         {
-            _segmentOneMetadata[0].Path.ShouldEqual("/'EXAMPLE'/'Time'");
-            _segmentOneMetadata[1].Path.ShouldEqual("/'EXAMPLE'/'Speed'");
-            _segmentOneMetadata[2].Path.ShouldEqual("/'EXAMPLE'/'Revs'");
-            _segmentOneMetadata[3].Path.ShouldEqual("/'EXAMPLE'/'Torque'");
-            _segmentOneMetadata[4].Path.ShouldEqual("/'EXAMPLE'");
-            _segmentOneMetadata[5].Path.ShouldEqual("/'Noise data'/'Noise_1'");
-            _segmentOneMetadata[6].Path.ShouldEqual("/'Noise data'");
-            _segmentOneMetadata[7].Path.ShouldEqual("/");
+            _segmentOneMetadata[0].Path[0].ShouldEqual("EXAMPLE");
+            _segmentOneMetadata[0].Path[1].ShouldEqual("Time");
+
+            _segmentOneMetadata[1].Path[0].ShouldEqual("EXAMPLE");
+            _segmentOneMetadata[1].Path[1].ShouldEqual("Speed");
+
+            _segmentOneMetadata[2].Path[0].ShouldEqual("EXAMPLE");
+            _segmentOneMetadata[2].Path[1].ShouldEqual("Revs");
+
+            _segmentOneMetadata[3].Path[0].ShouldEqual("EXAMPLE");
+            _segmentOneMetadata[3].Path[1].ShouldEqual("Torque");
+
+            _segmentOneMetadata[4].Path[0].ShouldEqual("EXAMPLE");
+
+            _segmentOneMetadata[5].Path[0].ShouldEqual("Noise data");
+            _segmentOneMetadata[5].Path[1].ShouldEqual("Noise_1");
+
+            _segmentOneMetadata[6].Path[0].ShouldEqual("Noise data");
+
+            _segmentOneMetadata[7].Path.Length.ShouldEqual(0);
         }
 
         [Test]
@@ -84,25 +96,25 @@ namespace TDMSReader.Tests
         public void Should_Have_Raw_Data_Markers()
         {
             _segmentOneMetadata[0].RawData.Size.ShouldEqual(8192);
-            _segmentOneMetadata[0].RawData.Offset.ShouldEqual(0);
+            _segmentOneMetadata[0].RawData.Offset.ShouldEqual(2303);
             _segmentOneMetadata[0].RawData.Count.ShouldEqual(1024);
             _segmentOneMetadata[0].RawData.DataType.ShouldEqual(10);
             _segmentOneMetadata[0].RawData.Dimension.ShouldEqual(1);
 
             _segmentOneMetadata[1].RawData.Size.ShouldEqual(8192);
-            _segmentOneMetadata[1].RawData.Offset.ShouldEqual(8192);
+            _segmentOneMetadata[1].RawData.Offset.ShouldEqual(10495);
             _segmentOneMetadata[1].RawData.Count.ShouldEqual(1024);
             _segmentOneMetadata[1].RawData.DataType.ShouldEqual(10);
             _segmentOneMetadata[1].RawData.Dimension.ShouldEqual(1);
 
             _segmentOneMetadata[2].RawData.Size.ShouldEqual(8192);
-            _segmentOneMetadata[2].RawData.Offset.ShouldEqual(16384);
+            _segmentOneMetadata[2].RawData.Offset.ShouldEqual(18687);
             _segmentOneMetadata[2].RawData.Count.ShouldEqual(1024);
             _segmentOneMetadata[2].RawData.DataType.ShouldEqual(10);
             _segmentOneMetadata[2].RawData.Dimension.ShouldEqual(1);
 
             _segmentOneMetadata[3].RawData.Size.ShouldEqual(8192);
-            _segmentOneMetadata[3].RawData.Offset.ShouldEqual(24576);
+            _segmentOneMetadata[3].RawData.Offset.ShouldEqual(26879);
             _segmentOneMetadata[3].RawData.Count.ShouldEqual(1024);
             _segmentOneMetadata[3].RawData.DataType.ShouldEqual(10);
             _segmentOneMetadata[3].RawData.Dimension.ShouldEqual(1);
@@ -114,7 +126,7 @@ namespace TDMSReader.Tests
             _segmentOneMetadata[4].RawData.Dimension.ShouldEqual(0);
 
             _segmentOneMetadata[5].RawData.Size.ShouldEqual(2097152);
-            _segmentOneMetadata[5].RawData.Offset.ShouldEqual(32768);
+            _segmentOneMetadata[5].RawData.Offset.ShouldEqual(35071);
             _segmentOneMetadata[5].RawData.Count.ShouldEqual(262144);
             _segmentOneMetadata[5].RawData.DataType.ShouldEqual(10);
             _segmentOneMetadata[5].RawData.Dimension.ShouldEqual(1);
@@ -132,7 +144,7 @@ namespace TDMSReader.Tests
             _segmentOneMetadata[7].RawData.Dimension.ShouldEqual(0);
 
             _segmentFourMetadata[2].RawData.Size.ShouldEqual(90);
-            _segmentFourMetadata[2].RawData.Offset.ShouldEqual(502848);
+            _segmentFourMetadata[2].RawData.Offset.ShouldEqual(7842947);
             _segmentFourMetadata[2].RawData.Count.ShouldEqual(5);
             _segmentFourMetadata[2].RawData.DataType.ShouldEqual(32);
             _segmentFourMetadata[2].RawData.Dimension.ShouldEqual(1);
