@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDMSReader", "TDMSReader\TDMSReader.csproj", "{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDMSReader.Tests", "TDMSReader.Tests\TDMSReader.Tests.csproj", "{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
