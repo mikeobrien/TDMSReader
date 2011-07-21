@@ -7,7 +7,6 @@ namespace TDMSReader.Tests
     public class ReaderSegmentTests : ReaderTestsBase
     {
         private const string Identifier = "TDSm";
-        private const int TableOfContents = 14;
         private const int Version = 4712;
 
         [Test]
@@ -16,7 +15,12 @@ namespace TDMSReader.Tests
             var leadin = Reader.ReadFirstSegment();
             leadin.ShouldNotBeNull();
             leadin.Identifier.ShouldEqual(Identifier);
-            leadin.TableOfContentsMask.ShouldEqual(TableOfContents);
+            leadin.TableOfContents.ContainsNewObjects.ShouldBeTrue();
+            leadin.TableOfContents.HasDaqMxData.ShouldBeFalse();
+            leadin.TableOfContents.HasMetaData.ShouldBeTrue();
+            leadin.TableOfContents.HasRawData.ShouldBeTrue();
+            leadin.TableOfContents.NumbersAreBigEndian.ShouldBeFalse();
+            leadin.TableOfContents.RawDataIsInterleaved.ShouldBeFalse();
             leadin.Version.ShouldEqual(Version);
             leadin.Offset.ShouldEqual(0);
             leadin.NextSegmentOffset.ShouldEqual(2132223);
@@ -31,7 +35,12 @@ namespace TDMSReader.Tests
                          Reader.ReadFirstSegment().NextSegmentOffset);
             leadin.ShouldNotBeNull();
             leadin.Identifier.ShouldEqual(Identifier);
-            leadin.TableOfContentsMask.ShouldEqual(TableOfContents);
+            leadin.TableOfContents.ContainsNewObjects.ShouldBeTrue();
+            leadin.TableOfContents.HasDaqMxData.ShouldBeFalse();
+            leadin.TableOfContents.HasMetaData.ShouldBeTrue();
+            leadin.TableOfContents.HasRawData.ShouldBeTrue();
+            leadin.TableOfContents.NumbersAreBigEndian.ShouldBeFalse();
+            leadin.TableOfContents.RawDataIsInterleaved.ShouldBeFalse();
             leadin.Version.ShouldEqual(Version);
             leadin.Offset.ShouldEqual(2132223);
             leadin.NextSegmentOffset.ShouldEqual(4733159);
@@ -47,7 +56,12 @@ namespace TDMSReader.Tests
                          Reader.ReadFirstSegment().NextSegmentOffset).NextSegmentOffset);
             leadin.ShouldNotBeNull();
             leadin.Identifier.ShouldEqual(Identifier);
-            leadin.TableOfContentsMask.ShouldEqual(TableOfContents);
+            leadin.TableOfContents.ContainsNewObjects.ShouldBeTrue();
+            leadin.TableOfContents.HasDaqMxData.ShouldBeFalse();
+            leadin.TableOfContents.HasMetaData.ShouldBeTrue();
+            leadin.TableOfContents.HasRawData.ShouldBeTrue();
+            leadin.TableOfContents.NumbersAreBigEndian.ShouldBeFalse();
+            leadin.TableOfContents.RawDataIsInterleaved.ShouldBeFalse();
             leadin.Version.ShouldEqual(Version);
             leadin.Offset.ShouldEqual(4733159);
             leadin.NextSegmentOffset.ShouldEqual(7334099);
@@ -64,7 +78,12 @@ namespace TDMSReader.Tests
                          Reader.ReadFirstSegment().NextSegmentOffset).NextSegmentOffset).NextSegmentOffset);
             leadin.ShouldNotBeNull();
             leadin.Identifier.ShouldEqual(Identifier);
-            leadin.TableOfContentsMask.ShouldEqual(TableOfContents);
+            leadin.TableOfContents.ContainsNewObjects.ShouldBeTrue();
+            leadin.TableOfContents.HasDaqMxData.ShouldBeFalse();
+            leadin.TableOfContents.HasMetaData.ShouldBeTrue();
+            leadin.TableOfContents.HasRawData.ShouldBeTrue();
+            leadin.TableOfContents.NumbersAreBigEndian.ShouldBeFalse();
+            leadin.TableOfContents.RawDataIsInterleaved.ShouldBeFalse();
             leadin.Version.ShouldEqual(Version);
             leadin.Offset.ShouldEqual(7334099);
             leadin.NextSegmentOffset.ShouldEqual(-1);

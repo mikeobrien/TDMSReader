@@ -27,7 +27,16 @@ namespace TDMSReader
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
             var leadin = new LeadIn { Offset = offset, MetadataOffset = offset + LeadIn.Length };
             leadin.Identifier = Encoding.ASCII.GetString(_reader.ReadBytes(4));
-            leadin.TableOfContentsMask = _reader.ReadInt32();
+            var tableOfContentsMask = _reader.ReadInt32();
+            leadin.TableOfContents = new TableOfContents
+                {
+                    ContainsNewObjects = ((tableOfContentsMask >> 2) & 1) == 1,
+                    HasDaqMxData = ((tableOfContentsMask >> 7) & 1) == 1,
+                    HasMetaData = ((tableOfContentsMask >> 1) & 1) == 1,
+                    HasRawData = ((tableOfContentsMask >> 3) & 1) == 1,
+                    NumbersAreBigEndian = ((tableOfContentsMask >> 6) & 1) == 1,
+                    RawDataIsInterleaved = ((tableOfContentsMask >> 5) & 1) == 1
+                };
             leadin.Version = _reader.ReadInt32();
             Func<long, long> resetWhenEol = x => x < _reader.BaseStream.Length ? x : -1;
             leadin.NextSegmentOffset = resetWhenEol(_reader.ReadInt64() + offset + LeadIn.Length);
@@ -45,7 +54,7 @@ namespace TDMSReader
             {
                 var metadata = new Metadata();
                 metadata.Path = Encoding.UTF8.GetString(_reader.ReadBytes(_reader.ReadInt32()));
-                metadata.RawData = new Data();
+                metadata.RawData = new RawData();
                 var rawDataIndexLength = _reader.ReadInt32();
                 if (rawDataIndexLength > 0)
                 {
@@ -113,18 +122,28 @@ namespace TDMSReader
             public long RawDataOffset { get; set; }
             public long NextSegmentOffset { get; set; }
             public string Identifier { get; set; }
-            public int TableOfContentsMask { get; set; }
+            public TableOfContents TableOfContents { get; set; }
             public int Version { get; set; }
+        }
+
+        public class TableOfContents
+        {
+            public bool HasMetaData { get; set; }
+            public bool HasRawData { get; set; }
+            public bool HasDaqMxData { get; set; }
+            public bool RawDataIsInterleaved { get; set; }
+            public bool NumbersAreBigEndian { get; set; }
+            public bool ContainsNewObjects { get; set; }
         }
 
         public class Metadata
         {
             public string Path { get; set; }
-            public Data RawData { get; set; }
+            public RawData RawData { get; set; }
             public IDictionary<string, object> Properties { get; set; } 
         }
 
-        public class Data
+        public class RawData
         {
             public long Offset { get; set; }
             public int DataType { get; set; }
