@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -30,8 +29,8 @@ namespace TDMSReader
             leadin.Identifier = Encoding.ASCII.GetString(_reader.ReadBytes(4));
             leadin.TableOfContentsMask = _reader.ReadInt32();
             leadin.Version = _reader.ReadInt32();
-            leadin.NextSegmentOffset = ResetIfPastEndOfFile(
-                                 _reader.BaseStream.Length, _reader.ReadInt64() + offset + LeadIn.Length);
+            Func<long, long> resetWhenEol = x => x < _reader.BaseStream.Length ? x : -1;
+            leadin.NextSegmentOffset = resetWhenEol(_reader.ReadInt64() + offset + LeadIn.Length);
             leadin.RawDataOffset = _reader.ReadInt64() + offset + LeadIn.Length;
             return leadin;
         }
@@ -41,18 +40,22 @@ namespace TDMSReader
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
             var objectCount = _reader.ReadInt32();
             var metadatas = new List<Metadata>();
+            long rawDataOffset = 0;
             for (var x = 0; x < objectCount; x++)
             {
                 var metadata = new Metadata();
                 metadata.Path = Encoding.UTF8.GetString(_reader.ReadBytes(_reader.ReadInt32()));
-                metadata.RawData = new Data { Length = _reader.ReadInt32() };
-                if (metadata.RawData.Length > 0)
+                metadata.RawData = new Data();
+                var rawDataIndexLength = _reader.ReadInt32();
+                if (rawDataIndexLength > 0)
                 {
+                    metadata.RawData.Offset = rawDataOffset;
                     metadata.RawData.DataType = _reader.ReadInt32();
                     metadata.RawData.Dimension = _reader.ReadInt32();
                     metadata.RawData.Count = _reader.ReadInt64();
-                    if (metadata.RawData.Length == 28) 
-                        metadata.RawData.Size = _reader.ReadInt64();
+                    metadata.RawData.Size = rawDataIndexLength == 28 ? _reader.ReadInt64() :
+                                                DataType.GetLength(metadata.RawData.DataType) * metadata.RawData.Count;
+                    rawDataOffset += metadata.RawData.Size;
                 }
                 var propertyCount = _reader.ReadInt32();
                 metadata.Properties = new Dictionary<string, object>();
@@ -69,24 +72,37 @@ namespace TDMSReader
 
         public IEnumerable<object> ReadRawData(long offset, long count, int dataType)
         {
-            var data = new List<object>();
+            return dataType == DataType.String ? GetRawStrings(offset, count) : GetRawFixed(offset, count, dataType);
+        }
+
+        private IEnumerable<object> GetRawFixed(long offset, long count, int dataType)
+        {
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            for (var x = 0; x < count; x++) yield return _valueReader.Read(dataType);
+        }
+
+        private IEnumerable<object> GetRawStrings(long offset, long count)
+        {
+            _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            var dataOffset = offset + (count * 4);
+            var indexPosition = _reader.BaseStream.Position;
+            var dataPosition = dataOffset;
             for (var x = 0; x < count; x++)
             {
-                if (offset == 7340099) Debug.WriteLine("Position {0}, Index {1}, Count {2}", _reader.BaseStream.Position, x, count);
-                data.Add(_valueReader.Read(dataType));
+                var endOfString = _reader.ReadInt32();
+                indexPosition = _reader.BaseStream.Position;
+
+                _reader.BaseStream.Seek(dataPosition, SeekOrigin.Begin);
+                yield return _valueReader.ReadString((int)((dataOffset + endOfString) - dataPosition));
+
+                dataPosition = dataOffset + endOfString;
+                _reader.BaseStream.Seek(indexPosition, SeekOrigin.Begin);
             }
-            return data;
         }
 
         public void Dispose()
         {
             _reader.Dispose();
-        }
-
-        private static long ResetIfPastEndOfFile(long length, long offset)
-        {
-            return offset >= length ? -1 : offset;
         }
 
         public class LeadIn
@@ -110,7 +126,7 @@ namespace TDMSReader
 
         public class Data
         {
-            public int Length { get; set; }
+            public long Offset { get; set; }
             public int DataType { get; set; }
             public int Dimension { get; set; }
             public long Count { get; set; }

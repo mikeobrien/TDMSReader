@@ -56,13 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="ReaderExportTextTests.cs" />
+    <Compile Include="ReaderExportTextFile.cs" />
     <Compile Include="ReaderRawDataTests.cs" />
     <Compile Include="ValueReaderTests.cs" />
     <Compile Include="ReaderTestsBase.cs" />
     <Compile Include="ReaderMetadataTests.cs" />
     <Compile Include="ReaderSegmentTests.cs" />
-    <Compile Include="SegmentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
