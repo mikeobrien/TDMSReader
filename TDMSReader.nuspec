@@ -16,7 +16,4 @@
       <iconUrl>https://github.com/mikeobrien/TDMSReader/raw/master/misc/logo.png</iconUrl>
       <tags>tdms national instruments</tags>
    </metadata>
-   <files>
-      <file src="src\TDMSReader\bin\Release\TDMSReader.*" target="lib" />
-   </files>
 </package>
