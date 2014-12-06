@@ -1,7 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using Should;
-using TDMSReader;
+using NationalInstruments.Tdms;
 
 namespace Tests
 {

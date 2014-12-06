@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace TDMSReader
+namespace NationalInstruments.Tdms
 {
     public static class BinaryReaderExtensions
     {

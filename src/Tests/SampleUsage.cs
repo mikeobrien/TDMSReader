@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using TDMSReader;
+using NationalInstruments.Tdms;
 
 namespace Tests
 {

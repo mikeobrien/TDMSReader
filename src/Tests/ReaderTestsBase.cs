@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using TDMSReader;
+using NationalInstruments.Tdms;
 
 namespace Tests
 {

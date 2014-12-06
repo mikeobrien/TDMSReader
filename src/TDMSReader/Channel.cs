@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TDMSReader
+namespace NationalInstruments.Tdms
 {
     public class Channel
     {

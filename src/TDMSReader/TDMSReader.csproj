@@ -8,7 +8,7 @@
     <ProjectGuid>{11347AB4-7FD3-4398-8AF5-37AE57D89FEC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TDMSReader</RootNamespace>
+    <RootNamespace>NationalInstruments.Tdms</RootNamespace>
     <AssemblyName>TDMSReader</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

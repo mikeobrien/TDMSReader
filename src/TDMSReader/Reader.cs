@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace TDMSReader
+namespace NationalInstruments.Tdms
 {
     public class Reader : IDisposable
     {
