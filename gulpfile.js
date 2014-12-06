@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     args = require('yargs').argv,
     assemblyInfo = require('gulp-dotnet-assembly-info'),
-    require('gulp-msbuild'),
+    msbuild = require('gulp-msbuild'),
     nunit = require('gulp-nunit-runner'),
     Nuget = require('nuget-runner');
 
