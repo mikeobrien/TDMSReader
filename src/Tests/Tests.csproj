@@ -8,8 +8,8 @@
     <ProjectGuid>{D3DF0E6C-F7C0-4E04-84AC-73FBCF1C89DC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TDMSReader.Tests</RootNamespace>
-    <AssemblyName>TDMSReader.Tests</AssemblyName>
+    <RootNamespace>Tests</RootNamespace>
+    <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

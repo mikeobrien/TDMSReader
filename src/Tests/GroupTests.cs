@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
 using Should;
+using TDMSReader;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     [TestFixture]
     public class GroupTests

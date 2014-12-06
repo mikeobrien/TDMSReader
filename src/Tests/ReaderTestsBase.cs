@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
+using TDMSReader;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     [TestFixture]
     public abstract class ReaderTestsBase

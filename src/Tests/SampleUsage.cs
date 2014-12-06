@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using TDMSReader;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     [TestFixture]
     public class SampleUsage
@@ -50,7 +51,7 @@ namespace TDMSReader.Tests
             }
         }
 
-        [TestAttribute, IgnoreAttribute]
+        [Test, Ignore]
         public void Create_Channel_Export_Text_File()
         {
             using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\temp\tdms.channel.export.txt")))

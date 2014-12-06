@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Should;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     [TestFixture]
     public class ReaderRawDataTests : ReaderTestsBase

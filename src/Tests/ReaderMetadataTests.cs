@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
 using Should;
+using TDMSReader;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     [TestFixture]
     public class ReaderMetadataTests : ReaderTestsBase

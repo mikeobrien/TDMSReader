@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace TDMSReader.Tests
+namespace Tests
 {
     public class Constants
     {
