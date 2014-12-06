@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+   <metadata>
+      <id>TDMSReader</id>
+      <version>0.0.0.0</version>
+      <title>TDMS Reader</title>
+      <authors>Mike O'Brien</authors>
+      <description>National Instruments TDMS File Reader for .NET and Mono.</description>
+      <releaseNotes />
+      <copyright />
+      <language>en-US</language>
+      <licenseUrl>https://github.com/mikeobrien/TDMSReader/blob/master/LICENSE</licenseUrl>
+      <projectUrl>https://github.com/mikeobrien/TDMSReader</projectUrl>
+      <owners>Mike O'Brien</owners>
+      <summary>Xml and json serializer for .NET and Mono.</summary>
+      <iconUrl>https://github.com/mikeobrien/TDMSReader/raw/master/misc/logo.png</iconUrl>
+      <tags>tdms national instruments</tags>
+   </metadata>
+   <files>
+      <file src="src\TDMSReader\bin\Release\TDMSReader.*" target="lib" />
+   </files>
+</package>

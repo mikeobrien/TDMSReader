@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TDMS Reader")]
-[assembly: AssemblyDescription("Reads NI TDMS files")]
+[assembly: AssemblyDescription("National Instruments TDMS File Reader for .NET and Mono.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ultraviolet Catastrophe")]
 [assembly: AssemblyProduct("TDMS Reader")]

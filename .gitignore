@@ -1,3 +1,4 @@
+~*
 obj
 bin
 _ReSharper.*
@@ -5,3 +6,12 @@ _ReSharper.*
 *.suo
 *.orig
 *.log
+aspnet_client
+*.userprefs
+*.pidb
+.DS_Store
+Thumbs.db
+node_modules
+
+# Nuget sources
+src/packages/*/src/*
