@@ -26,7 +26,7 @@ gulp.task('build', ['assemblyInfo'], function() {
     return gulp
         .src('**/*.sln')
         .pipe(msbuild({
-            toolsVersion: 12.0,
+            toolsVersion: 4.0,
             targets: ['Clean', 'Build'],
             errorOnFail: true,
             stdout: true
@@ -41,7 +41,7 @@ gulp.task('test', ['build'], function () {
         }));
 });
 
-gulp.task('nuget-package', ['nunit'], function() {
+gulp.task('nuget-package', ['test'], function() {
 
     gulp.src('src/TDMSReader/bin/Release/TDMSReader.*')
         .pipe(gulp.dest('package/lib'));
