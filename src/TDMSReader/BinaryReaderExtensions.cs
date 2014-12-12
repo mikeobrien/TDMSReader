@@ -23,29 +23,29 @@ namespace NationalInstruments.Tdms
 
         public static object Read(this BinaryReader reader, int dataType)
         {
-            object value;
             switch (dataType)
             {
-                case DataType.Empty: value = null; break;
-                case DataType.Void: value = null; reader.ReadByte(); break;
-                case DataType.Integer8: value = reader.ReadSByte(); break;
-                case DataType.Integer16: value = reader.ReadInt16(); break;
-                case DataType.Integer32: value = reader.ReadInt32(); break;
-                case DataType.Integer64: value = reader.ReadInt64(); break;
-                case DataType.UnsignedInteger8: value = reader.ReadByte(); break;
-                case DataType.UnsignedInteger16: value = reader.ReadUInt16(); break;
-                case DataType.UnsignedInteger32: value = reader.ReadUInt32(); break;
-                case DataType.UnsignedInteger64: value = reader.ReadUInt64(); break;
+                case DataType.Empty: return null;
+                case DataType.Void: reader.ReadByte(); return null;
+                case DataType.Integer8: return reader.ReadSByte();
+                case DataType.Integer16: return reader.ReadInt16();
+                case DataType.Integer32: return reader.ReadInt32();
+                case DataType.Integer64: return reader.ReadInt64();
+                case DataType.UnsignedInteger8: return reader.ReadByte();
+                case DataType.UnsignedInteger16: return reader.ReadUInt16();
+                case DataType.UnsignedInteger32: return reader.ReadUInt32();
+                case DataType.UnsignedInteger64: return reader.ReadUInt64();
                 case DataType.SingleFloat:
-                case DataType.SingleFloatWithUnit: value = reader.ReadSingle(); break;
+                case DataType.SingleFloatWithUnit: return reader.ReadSingle();
                 case DataType.DoubleFloat:
-                case DataType.DoubleFloatWithUnit: value = reader.ReadDouble(); break;
-                case DataType.String: value = Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32())); break;
-                case DataType.Boolean: value = reader.ReadBoolean(); break;
-                case DataType.TimeStamp: reader.ReadInt64(); value = new DateTime(1904, 1, 1).AddSeconds(reader.ReadInt64()); break;
+                case DataType.DoubleFloatWithUnit: return reader.ReadDouble();
+                case DataType.String: return Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32()));
+                case DataType.Boolean: return reader.ReadBoolean();
+                case DataType.TimeStamp: 
+                    reader.ReadInt64(); 
+                    return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(reader.ReadInt64()).ToLocalTime(); 
                 default: throw new ArgumentException("Unknown data type " + dataType, "dataType");
             }
-            return value;
         }
     }
 }

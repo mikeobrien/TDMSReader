@@ -16,8 +16,8 @@ namespace Tests
             segment.RawDataOffset.ShouldEqual(2303);
             metadata.RawData.Offset.ShouldEqual(2303);
             rawData.Count.ShouldEqual(1024);
-            rawData.Where(x => x == 0.0).Count().ShouldEqual(1);
-            rawData.Where(x => x != 0.0).Count().ShouldEqual(1023);
+            rawData.Count(x => x == 0.0).ShouldEqual(1);
+            rawData.Count(x => x != 0.0).ShouldEqual(1023);
         }
 
         [Test]

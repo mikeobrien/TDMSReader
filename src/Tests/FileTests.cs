@@ -20,11 +20,13 @@ namespace Tests
         [Test]
         public void Should_Contain_File_Information()
         {
+            Console.WriteLine( new DateTime(2009, 4, 24, 8, 29, 45, DateTimeKind.Local));
+            Console.WriteLine(new DateTime(2009, 4, 24, 8, 29, 45, DateTimeKind.Utc));
             File.Properties.Count.ShouldEqual(10);
             File.Properties["title"].ShouldEqual("DIAdem example data set");
             File.Properties["author"].ShouldEqual("National Instruments");
             File.Properties["registertxt3"].ShouldEqual(string.Empty);
-            File.Properties["datetime"].ShouldEqual(DateTime.Parse("4/24/2009 8:29:45 AM"));
+            File.Properties["datetime"].ShouldEqual(new DateTime(2009, 4, 24, 8, 29, 45, DateTimeKind.Utc).ToLocalTime());
             File.Properties["registertxt1"].ShouldEqual(string.Empty);
             File.Properties["registertxt2"].ShouldEqual(string.Empty);
             File.Properties["name"].ShouldEqual("EXAMPLE");
