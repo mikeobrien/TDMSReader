@@ -42,7 +42,10 @@ namespace NationalInstruments.Tdms
                 case DataType.DoubleFloatWithUnit: value = reader.ReadDouble(); break;
                 case DataType.String: value = Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32())); break;
                 case DataType.Boolean: value = reader.ReadBoolean(); break;
-                case DataType.TimeStamp: reader.ReadInt64(); value = new DateTime(1904, 1, 1).AddSeconds(reader.ReadInt64()); break;
+                case DataType.TimeStamp: 
+                    reader.ReadInt64(); 
+                    value = new DateTime(1904, 1, 1).AddSeconds(reader.ReadInt64()).ToUniversalTime(); 
+                    break;
                 default: throw new ArgumentException("Unknown data type " + dataType, "dataType");
             }
             return value;

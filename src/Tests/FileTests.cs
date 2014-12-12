@@ -24,7 +24,7 @@ namespace Tests
             File.Properties["title"].ShouldEqual("DIAdem example data set");
             File.Properties["author"].ShouldEqual("National Instruments");
             File.Properties["registertxt3"].ShouldEqual(string.Empty);
-            File.Properties["datetime"].ShouldEqual(DateTime.Parse("4/24/2009 8:29:45 AM"));
+            File.Properties["datetime"].ShouldEqual(DateTime.Parse("4/24/2009 8:29:45 AM").ToUniversalTime());
             File.Properties["registertxt1"].ShouldEqual(string.Empty);
             File.Properties["registertxt2"].ShouldEqual(string.Empty);
             File.Properties["name"].ShouldEqual("EXAMPLE");

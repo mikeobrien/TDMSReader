@@ -18,9 +18,9 @@ namespace Tests
             var firstSegment = Reader.ReadFirstSegment();
             _segmentOneMetadata = Reader.ReadMetadata(firstSegment);
             _segmentFourMetadata = Reader.ReadMetadata(Reader.ReadSegment(
-                                     Reader.ReadSegment(
-                                     Reader.ReadSegment(
-                                     firstSegment.NextSegmentOffset).NextSegmentOffset).NextSegmentOffset));
+                Reader.ReadSegment(
+                Reader.ReadSegment(
+                firstSegment.NextSegmentOffset).NextSegmentOffset).NextSegmentOffset));
         }
 
         [Test]
