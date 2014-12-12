@@ -57,7 +57,7 @@ namespace Tests
             channel.Properties["wf_increment"].ShouldEqual(2E-05);
             channel.Properties["wf_samples"].ShouldEqual(325000);
             channel.Properties["wf_start_offset"].ShouldEqual(0.0);
-            channel.Properties["wf_start_time"].ShouldEqual(DateTime.Parse("12/31/1903 11:00:00 PM"));
+            channel.Properties["wf_start_time"].ShouldEqual(new DateTime(1903, 12, 31, 23, 0, 0, DateTimeKind.Utc));
             channel.Properties["wf_time_pref"].ShouldEqual("relative");
             channel.Properties["wf_xname"].ShouldEqual("Time");
             channel.Properties["wf_xunit_string"].ShouldEqual("s");
