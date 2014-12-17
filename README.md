@@ -1,7 +1,7 @@
 TDMS Reader
 =============
 
-[![Nuget](http://img.shields.io/nuget/v/TDMSReader.svg)](http://www.nuget.org/packages/TDMSReader/) [![Nuget downloads](http://img.shields.io/nuget/dt/TDMSReader.svg)](http://www.nuget.org/packages/TDMSReader/) [![Build Status](https://travis-ci.org/mikeobrien/TDMSReader.png?branch=master)](https://travis-ci.org/mikeobrien/TDMSReader) 
+[![Nuget](http://img.shields.io/nuget/v/TDMSReader.svg?style=flat)](http://www.nuget.org/packages/TDMSReader/) [![Nuget downloads](http://img.shields.io/nuget/dt/TDMSReader.svg?style=flat)](http://www.nuget.org/packages/TDMSReader/) [![Travis CI Build Status](http://img.shields.io/travis/mikeobrien/TDMSReader.svg?style=flat&label=Travis%20CI)](https://travis-ci.org/mikeobrien/TDMSReader) [![TeamCity Build Status](https://img.shields.io/teamcity/http/build.mikeobrien.net/s/tdmsreader.svg?style=flat&label=TeamCity)](http://build.mikeobrien.net/viewType.html?buildTypeId=tdmsreader&guest=1)
 
 A managed library for reading TDMS files.
 
