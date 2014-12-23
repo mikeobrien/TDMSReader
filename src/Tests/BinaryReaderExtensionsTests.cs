@@ -165,17 +165,15 @@ namespace Tests
         }
 
         [Test]
-        public void Should_Read_Timestamp_Value()
+        [TestCase(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "1904-01-01 00:00:00")]
+        [TestCase(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 161, 147, 111, 196, 0, 0, 0, 0 }, "2008-06-07 01:23:45")]
+        [TestCase(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 97, 165, 147, 237, 255, 255, 255, 255 }, "1894-03-15 13:23:45")]
+        [TestCase(new byte[] { 0, 0, 0, 0, 0, 0, 0, 128, 97, 165, 147, 237, 255, 255, 255, 255 }, "1894-03-15 13:23:45.500")]
+        [TestCase(new byte[] { 205, 204, 204, 204, 204, 204, 204, 204, 97, 165, 147, 237, 255, 255, 255, 255 }, "1894-03-15 13:23:45.800")]
+        public void Should_Read_Timestamp_Value(byte[] data, string date)
         {
-            var reader = new BinaryReader(new MemoryStream(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  
-                                                                        0, 0, 0, 0, 0, 0, 0, 0, 161, 147, 111, 196, 0, 0, 0, 0, 
-                                                                        0, 0, 0, 0, 0, 0, 0, 0, 97, 165, 147, 237, 255, 255, 255, 255}));
-            var value = reader.Read(DataType.TimeStamp);
-            value.ShouldBeType<DateTime>();
-            ((DateTime)value).ShouldEqual(DateTime.Parse("1904-01-01 00:00:00").ToLocalTime());
-
-            reader.Read<DateTime>(DataType.TimeStamp).ShouldEqual(DateTime.Parse("2008-06-07 01:23:45").ToLocalTime());
-            reader.Read<DateTime>(DataType.TimeStamp).ShouldEqual(DateTime.Parse("1894-03-15 13:23:45").ToLocalTime());
+            new BinaryReader(new MemoryStream(data))
+                .Read<DateTime>(DataType.TimeStamp).ShouldEqual(DateTime.Parse(date).ToLocalTime());
         }
 
         [Test]

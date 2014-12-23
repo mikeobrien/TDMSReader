@@ -41,9 +41,12 @@ namespace NationalInstruments.Tdms
                 case DataType.DoubleFloatWithUnit: return reader.ReadDouble();
                 case DataType.String: return Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32()));
                 case DataType.Boolean: return reader.ReadBoolean();
-                case DataType.TimeStamp: 
-                    reader.ReadInt64(); 
-                    return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(reader.ReadInt64()).ToLocalTime(); 
+                case DataType.TimeStamp:
+                    var milliseconds = (int)((reader.ReadUInt64() / (float)ulong.MaxValue) * 1000);
+                    return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                        .AddSeconds(reader.ReadInt64())
+                        .AddMilliseconds(milliseconds)
+                        .ToLocalTime(); 
                 default: throw new ArgumentException("Unknown data type " + dataType, "dataType");
             }
         }
