@@ -8,7 +8,7 @@ namespace Tests
     [TestFixture]
     public class ReaderMetadataTests : ReaderTestsBase
     {
-        private IList<Reader.Metadata> _segmentOneMetadata;
+        private IList<Reader.Metadata> _segmentOneMetadata; 
         private IList<Reader.Metadata> _segmentFourMetadata;
 
         [SetUp]
