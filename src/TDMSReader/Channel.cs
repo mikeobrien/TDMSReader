@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NationalInstruments.Tdms
@@ -7,12 +8,12 @@ namespace NationalInstruments.Tdms
     public class Channel
     {
         private readonly IEnumerable<Reader.RawData> _rawData;
-        private readonly string _path;
+        private readonly Reader _reader;
 
-        public Channel(string name, IDictionary<string, object> properties, IEnumerable<Reader.RawData> rawData, string path)
+        public Channel(string name, IDictionary<string, object> properties, IEnumerable<Reader.RawData> rawData, Reader reader)
         {
             _rawData = rawData;
-            _path = path;
+            _reader = reader;
             Name = name;
             Properties = properties;
         }
@@ -27,8 +28,7 @@ namespace NationalInstruments.Tdms
         {
             if (_rawData.Any(x => x.IsInterleaved))
                 throw new NotSupportedException("This library does not support the reading of interleaved data.");
-            using (var reader = new Reader(_path))
-                foreach (var value in _rawData.SelectMany(reader.ReadRawData)) yield return (T)value;
+            return _rawData.SelectMany(_reader.ReadRawData).Select(value => (T)value);
         }
     }
 }

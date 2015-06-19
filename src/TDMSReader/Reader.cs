@@ -7,16 +7,13 @@ using System.Text.RegularExpressions;
 
 namespace NationalInstruments.Tdms
 {
-    public class Reader : IDisposable
+    public class Reader
     {
         private readonly BinaryReader _reader;
 
-        public Reader(string path) : 
-            this(new FileStream(path, FileMode.Open, FileAccess.Read)) { }
-
-        public Reader(Stream file)
+        public Reader(Stream stream)
         {
-            _reader = new BinaryReader(file);
+            _reader = new BinaryReader(stream);
         }
 
         public Segment ReadFirstSegment()
@@ -115,12 +112,7 @@ namespace NationalInstruments.Tdms
                 _reader.BaseStream.Seek(indexPosition, SeekOrigin.Begin);
             }
         }
-
-        public void Dispose()
-        {
-            _reader.Dispose();
-        }
-
+        
         public class Segment
         {
             public const long Length = 28;

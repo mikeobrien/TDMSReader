@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.IO;
+using NUnit.Framework;
 using NationalInstruments.Tdms;
 
 namespace Tests
@@ -6,18 +7,20 @@ namespace Tests
     [TestFixture]
     public abstract class ReaderTestsBase
     {
+        private Stream _stream;
         protected Reader Reader;
 
         [SetUp]
         public void Setup()
         {
-            Reader = new Reader(Constants.CreateStream());
+            _stream = Constants.CreateStream();
+            Reader = new Reader(_stream);
         }
 
         [TearDown]
         public void TearDown()
         {
-            Reader.Dispose();
+            _stream.Dispose();
         }
     }
 }

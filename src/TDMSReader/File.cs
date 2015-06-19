@@ -1,19 +1,30 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NationalInstruments.Tdms
 {
-    public class File : IEnumerable<Group>
+    public class File : IEnumerable<Group>, IDisposable
     {
-        private readonly string _path;
+        private readonly Lazy<Stream> _stream;
 
-        public File(string path)
+        private File()
         {
-            _path = path;
             Properties = new Dictionary<string, object>();
             Groups = new Dictionary<string, Group>();
+        }
+
+        public File(Stream stream) : this()
+        {
+            if (!stream.CanSeek) throw new ArgumentException("Only seekable streams supported.", "stream");
+            _stream = new Lazy<Stream>(() => stream);
+        }
+
+        public File(string path) : this()
+        {
+            _stream = new Lazy<Stream>(() => new FileStream(path, FileMode.Open, FileAccess.Read));
         }
 
         public IDictionary<string, object> Properties { get; private set; }
@@ -21,13 +32,11 @@ namespace NationalInstruments.Tdms
 
         public void Open()
         {
-            using (var reader = new Reader(_path))
-            {
-                var metadata = LoadMetadata(reader).ToList();
-                LoadFile(metadata);
-                LoadGroups(Groups, metadata);
-                LoadChannels(Groups, metadata, _path);
-            }
+            var reader = new Reader(_stream.Value);
+            var metadata = LoadMetadata(reader).ToList();
+            LoadFile(metadata);
+            LoadGroups(Groups, metadata);
+            LoadChannels(Groups, metadata, reader);
         }
 
         private void LoadFile(IEnumerable<Reader.Metadata> metadata)
@@ -45,7 +54,7 @@ namespace NationalInstruments.Tdms
                 groups.Add(group.Path[0], new Group(group.Path[0], group.Properties));
         }
 
-        private static void LoadChannels(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata, string path)
+        private static void LoadChannels(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata, Reader reader)
         {
             var channelMetadata = metadata.Where(x => x.Path.Length == 2).
                                            GroupBy(x => x.Path[1]).
@@ -53,7 +62,7 @@ namespace NationalInstruments.Tdms
             foreach (var channel in channelMetadata)
                 channel.Item1.Channels.Add(channel.Item2.First().Path[1], new Channel(channel.Item2.First().Path[1], 
                     channel.Item2.OrderByDescending(y => y.Properties.Count).First().Properties,
-                    channel.Item2.Where(x => x.RawData.Count > 0).Select(x => x.RawData), path));
+                    channel.Item2.Where(x => x.RawData.Count > 0).Select(x => x.RawData), reader));
         }
 
         private static IEnumerable<Reader.Metadata> LoadMetadata(Reader reader)
@@ -73,5 +82,10 @@ namespace NationalInstruments.Tdms
 
         public IEnumerator<Group> GetEnumerator() { return Groups.Values.GetEnumerator(); }
         IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+
+        public void Dispose()
+        {
+            _stream.Value.Dispose();
+        }
     }
 }

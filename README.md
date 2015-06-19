@@ -17,8 +17,8 @@ The folowing demonstrates how to read data from a TDMS file.
 
 ```csharp
 using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\export.txt")))
+using (var tdms = new NationalInstruments.Tdms.File("Sample.tdms"))
 {
-    var tdms = new NationalInstruments.Tdms.File("Sample.tdms");
     tdms.Open();
 
     foreach (var value in tdms.Groups["Noise data"].Channels["Noise_1"].GetData<double>())
@@ -30,8 +30,8 @@ The folowing demonstrates enumeration of properties, groups and channels.
 
 ```csharp
 using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\tdms.overvw.txt")))
+using (var tdms = new NationalInstruments.Tdms.File("Sample.tdms"))
 {
-    var tdms = new NationalInstruments.Tdms.File("Sample.tdms");
     tdms.Open();
 
     output.WriteLine("Properties:");
