@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ChannelTests.cs" />
+    <Compile Include="AdditionalPropertiesFileTests.cs" />
+    <Compile Include="FileStreamingTests.cs" />
     <Compile Include="GroupTests.cs" />
     <Compile Include="FileTests.cs" />
     <Compile Include="SampleUsage.cs" />
@@ -72,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="AdditionalProperties.tdms">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TDMSReader\TDMSReader.csproj">
