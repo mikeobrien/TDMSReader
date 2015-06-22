@@ -41,9 +41,12 @@ namespace NationalInstruments.Tdms
 
         private void LoadFile(IEnumerable<Reader.Metadata> metadata)
         {
-            var fileMetadata = metadata.Where(x => x.Path.Length == 0).
-                                        OrderByDescending(x => x.Properties.Count).FirstOrDefault();
-            if (fileMetadata != null) Properties = fileMetadata.Properties;
+            var fileMetadata = metadata.Where(x => x.Path.Length == 0).Select(m => m.Properties).ToList();
+
+            foreach (var property in fileMetadata.SelectMany(properties => properties))
+            {
+                this.Properties.Add(property);
+            }
         }
 
         private static void LoadGroups(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata)
