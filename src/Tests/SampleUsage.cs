@@ -12,8 +12,7 @@ namespace Tests
         {
             using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\temp\tdms.overview.txt")))
             {
-                var tdms = new File("Sample.tdms");
-                tdms.Open();
+                var tdms = new File("Sample.tdms").Open();
 
                 output.WriteLine("Properties:");
                 foreach (var property in tdms.Properties)
@@ -56,8 +55,7 @@ namespace Tests
         {
             using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\temp\tdms.channel.export.txt")))
             {   
-                var tdms = new File("Sample.tdms");
-                tdms.Open();
+                var tdms = new File("Sample.tdms").Open();
 
                 foreach (var value in tdms.Groups["Noise data"].Channels["Noise_1"].GetData<double>())
                     output.WriteLine(value);

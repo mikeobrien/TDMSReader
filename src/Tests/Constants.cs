@@ -5,7 +5,6 @@ namespace Tests
     public class Constants
     {
         public const string SampleFile = "Sample.tdms";
-
         public const string AdditionalPropertiesFile = "AdditionalProperties.tdms";
 
         public static Stream CreateStream()

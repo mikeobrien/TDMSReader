@@ -9,19 +9,24 @@ namespace Tests
     [TestFixture]
     public class ChannelTests
     {
-        protected File File;
+        private File _file;
 
         [SetUp]
         public void Setup()
         {
-            File = new File(Constants.SampleFile);
-            File.Open();
+            _file = new File(Constants.SampleFile).Open();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _file.Dispose();
         }
 
         [Test]
         public void Should_Contain_Channel_Information()
         {
-            var group = File.Groups["Noise data"];
+            var group = _file.Groups["Noise data"];
 
             group.Channels.Count.ShouldEqual(3);
 
@@ -66,7 +71,7 @@ namespace Tests
         [Test]
         public void Should_Read_Raw_Data()
         {
-            var channel = File.Groups["Noise data"].Channels["Noise_1"];
+            var channel = _file.Groups["Noise data"].Channels["Noise_1"];
             var data = channel.GetData<double>().ToList();
             data.Count().ShouldEqual(325000);
             data.Any(x => x == 0.0).ShouldBeFalse();

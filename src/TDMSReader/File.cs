@@ -30,23 +30,21 @@ namespace NationalInstruments.Tdms
         public IDictionary<string, object> Properties { get; private set; }
         public IDictionary<string, Group> Groups { get; private set; } 
 
-        public void Open()
+        public File Open()
         {
             var reader = new Reader(_stream.Value);
             var metadata = LoadMetadata(reader).ToList();
             LoadFile(metadata);
             LoadGroups(Groups, metadata);
             LoadChannels(Groups, metadata, reader);
+            return this;
         }
-
+        
         private void LoadFile(IEnumerable<Reader.Metadata> metadata)
         {
-            var fileMetadata = metadata.Where(x => x.Path.Length == 0).Select(m => m.Properties).ToList();
-
-            foreach (var property in fileMetadata.SelectMany(properties => properties))
-            {
-                this.Properties.Add(property);
-            }
+            metadata.Where(x => x.Path.Length == 0)
+                .SelectMany(m => m.Properties).ToList()
+                .ForEach(x => Properties.Add(x));
         }
 
         private static void LoadGroups(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata)
