@@ -112,7 +112,12 @@ namespace NationalInstruments.Tdms
                 _reader.BaseStream.Seek(indexPosition, SeekOrigin.Begin);
             }
         }
-        
+
+        public long FileSize
+        {
+            get { return _reader.BaseStream.Length; }
+        }
+
         public class Segment
         {
             public const long Length = 28;
