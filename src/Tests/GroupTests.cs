@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using Should;
 using NationalInstruments.Tdms;
 
@@ -8,17 +9,20 @@ namespace Tests
     public class GroupTests
     {
         private File _file;
+        private File _noGroupInfofile;
 
         [SetUp]
         public void Setup()
         {
             _file = new File(Constants.SampleFile).Open();
+            _noGroupInfofile = new File(Constants.IncrementalMetaInformation).Open();
         }
 
         [TearDown]
         public void TearDown()
         {
             _file.Dispose();
+            _noGroupInfofile.Dispose();
         }
 
         [Test]
@@ -57,6 +61,13 @@ namespace Tests
             group.Properties["registertxt1"].ShouldEqual(string.Empty);
             group.Properties["registertxt2"].ShouldEqual(string.Empty);
             group.Properties["registertxt3"].ShouldEqual(string.Empty);
+        }
+
+        [Test]
+        public void Should_Create_Implicit_Group()
+        {
+            var group = _noGroupInfofile.Groups.First();
+            group.Key.ShouldEqual("group");
         }
     }
 }
