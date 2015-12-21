@@ -7,6 +7,7 @@ namespace Tests
         public const string SampleFile = "Sample.tdms";
         public const string AdditionalPropertiesFile = "AdditionalProperties.tdms";
         public const string IncrementalMetaInformation = "IncrementalMetaInformation.tdms";
+        public const string IncrementalMetaInformationInterleavedData = "IncrementalMetaInformationInterleavedData.tdms";
 
         public static Stream CreateStream()
         {

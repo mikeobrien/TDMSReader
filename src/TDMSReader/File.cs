@@ -83,10 +83,10 @@ namespace NationalInstruments.Tdms
                 var metadatas = reader.ReadMetadata(segment);
                 long rawDataSize = 0;
                 long nextOffset = segment.RawDataOffset;
-                
+
                 foreach (var m in metadatas)
                 {
-                    if (m.RawData.Count == 0 && prevSegment != null && m.Path.Length > 1 && segment.NextSegmentOffset != -1)
+                    if (m.RawData.Count == 0 && prevSegment != null && m.Path.Length > 1)
                     {
                         // apply previous metadata if available
                         var prevMetaData = prevSegment.Item2.First(md => md.Path.Length > 1 && md.Path[1] == m.Path[1]);
@@ -95,8 +95,18 @@ namespace NationalInstruments.Tdms
                         m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
                         m.RawData.Offset = segment.RawDataOffset + rawDataSize;
                         m.RawData.IsInterleaved = prevMetaData.RawData.IsInterleaved;
+                        m.RawData.InterleaveStride = prevMetaData.RawData.InterleaveStride;
                         m.RawData.Size = prevMetaData.RawData.Size;
                         m.RawData.Dimension = prevMetaData.RawData.Dimension;
+                    }
+                    if (m.RawData.IsInterleaved && segment.NextSegmentOffset <= 0)
+                    {
+                        m.RawData.Count = segment.NextSegmentOffset > 0
+                            ? (segment.NextSegmentOffset - m.RawData.Offset + m.RawData.InterleaveStride - 1)/
+                              m.RawData.InterleaveStride
+                            : (reader.FileSize - m.RawData.Offset + m.RawData.InterleaveStride - 1)/
+                              m.RawData.InterleaveStride;
+
                     }
                     if (m.Path.Length > 1)
                     {
@@ -104,36 +114,41 @@ namespace NationalInstruments.Tdms
                         nextOffset += m.RawData.Size;
                     }
                 }
+
                 var implicitMetadatas = new List<Reader.Metadata>();
-                while (nextOffset < segment.NextSegmentOffset || (segment.NextSegmentOffset == -1 && nextOffset < reader.FileSize))
+                if (metadatas.All(m => !m.RawData.IsInterleaved && m.RawData.Size > 0))
                 {
-                    // Incremental Meta Data see http://www.ni.com/white-paper/5696/en/#toc1
-                    foreach (var m in metadatas)
+                    while (nextOffset < segment.NextSegmentOffset ||
+                           (segment.NextSegmentOffset == -1 && nextOffset < reader.FileSize))
                     {
-                        if (m.Path.Length > 1)
+                        // Incremental Meta Data see http://www.ni.com/white-paper/5696/en/#toc1
+                        foreach (var m in metadatas)
                         {
-                            var implicitMetadata = new Reader.Metadata()
+                            if (m.Path.Length > 1)
                             {
-                                Path = m.Path,
-                                RawData = new Reader.RawData()
+                                var implicitMetadata = new Reader.Metadata()
                                 {
-                                    Count = m.RawData.Count,
-                                    DataType = m.RawData.DataType,
-                                    ClrDataType = m.RawData.ClrDataType,
-                                    Offset = nextOffset,
-                                    IsInterleaved = m.RawData.IsInterleaved,
-                                    Size = m.RawData.Size,
-                                    Dimension = m.RawData.Dimension
-                                },
-                                Properties = m.Properties
-                            };
-                            implicitMetadatas.Add(implicitMetadata);
-                            nextOffset += implicitMetadata.RawData.Size;
+                                    Path = m.Path,
+                                    RawData = new Reader.RawData()
+                                    {
+                                        Count = m.RawData.Count,
+                                        DataType = m.RawData.DataType,
+                                        ClrDataType = m.RawData.ClrDataType,
+                                        Offset = nextOffset,
+                                        IsInterleaved = m.RawData.IsInterleaved,
+                                        Size = m.RawData.Size,
+                                        Dimension = m.RawData.Dimension
+                                    },
+                                    Properties = m.Properties
+                                };
+                                implicitMetadatas.Add(implicitMetadata);
+                                nextOffset += implicitMetadata.RawData.Size;
+                            }
                         }
                     }
                 }
-                var metadataWithImplicit = metadatas.Concat(implicitMetadatas).ToList();
-                prevSegment = Tuple.Create(segment, metadataWithImplicit);
+                var metadataWIthImplicit = metadatas.Concat(implicitMetadatas).ToList();
+                prevSegment = Tuple.Create(segment, metadataWIthImplicit);
                 segmentMetadata.Add(prevSegment);
             }
 

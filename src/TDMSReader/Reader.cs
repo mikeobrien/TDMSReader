@@ -50,6 +50,8 @@ namespace NationalInstruments.Tdms
             var objectCount = _reader.ReadInt32();
             var metadatas = new List<Metadata>();
             var rawDataOffset = segment.RawDataOffset;
+            bool isInterleaved = false;
+            int interleaveStride = 0;
             for (var x = 0; x < objectCount; x++)
             {
                 var metadata = new Metadata();
@@ -69,6 +71,9 @@ namespace NationalInstruments.Tdms
                                                 DataType.GetArrayLength(metadata.RawData.DataType, metadata.RawData.Count);
                     rawDataOffset += metadata.RawData.Size;
                 }
+                isInterleaved = isInterleaved || metadata.RawData.IsInterleaved;
+                if (isInterleaved)
+                    interleaveStride += (int)metadata.RawData.Size;
                 var propertyCount = _reader.ReadInt32();
                 metadata.Properties = new Dictionary<string, object>();
                 for (var y = 0; y < propertyCount; y++)
@@ -77,13 +82,29 @@ namespace NationalInstruments.Tdms
                     var value = _reader.Read(_reader.ReadInt32());
                     metadata.Properties.Add(key, value);
                 }
-                metadatas.Add(metadata);
+                 metadatas.Add(metadata);
+            }
+            if (isInterleaved)
+            {
+                foreach (var metadata in metadatas)
+                {
+                    if (metadata.RawData.ClrDataType != null)
+                    {
+                        metadata.RawData.InterleaveStride = interleaveStride;
+
+                        metadata.RawData.Count = segment.NextSegmentOffset > 0
+                            ? (segment.NextSegmentOffset - metadata.RawData.Offset + interleaveStride - 1) / interleaveStride
+                            : (_reader.BaseStream.Length - metadata.RawData.Offset + interleaveStride - 1) / interleaveStride;
+                    }
+                }
             }
             return metadatas;
         }
 
         public IEnumerable<object> ReadRawData(RawData rawData)
         {
+            if (rawData.IsInterleaved)
+                return ReadRawInterleaved(rawData.Offset, rawData.Count, rawData.DataType, rawData.InterleaveStride - (int)rawData.Size);
             return rawData.DataType == DataType.String ? ReadRawStrings(rawData.Offset, rawData.Count) :
                                                          ReadRawFixed(rawData.Offset, rawData.Count, rawData.DataType);
         }
@@ -92,6 +113,17 @@ namespace NationalInstruments.Tdms
         {
             _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
             for (var x = 0; x < count; x++) yield return _reader.Read(dataType);
+        }
+
+        private IEnumerable<object> ReadRawInterleaved(long offset, long count, int dataType, int interleaveSkip)
+        {
+            _reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            for (var x = 0; x < count; x++)
+            {
+                var value = _reader.Read(dataType);
+                _reader.BaseStream.Seek(interleaveSkip, SeekOrigin.Current);
+                yield return value;
+            }
         }
 
         private IEnumerable<object> ReadRawStrings(long offset, long count)
@@ -156,6 +188,7 @@ namespace NationalInstruments.Tdms
             public long Count { get; set; }
             public long Size { get; set; }
             public bool IsInterleaved { get; set; }
+            public int InterleaveStride { get; set; }
         }
     }
 }
