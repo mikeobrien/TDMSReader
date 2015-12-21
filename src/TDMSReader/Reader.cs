@@ -82,7 +82,7 @@ namespace NationalInstruments.Tdms
                     var value = _reader.Read(_reader.ReadInt32());
                     metadata.Properties.Add(key, value);
                 }
-                 metadatas.Add(metadata);
+                metadatas.Add(metadata);
             }
             if (isInterleaved)
             {

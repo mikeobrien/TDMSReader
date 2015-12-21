@@ -147,8 +147,8 @@ namespace NationalInstruments.Tdms
                         }
                     }
                 }
-                var metadataWIthImplicit = metadatas.Concat(implicitMetadatas).ToList();
-                prevSegment = Tuple.Create(segment, metadataWIthImplicit);
+                var metadataWithImplicit = metadatas.Concat(implicitMetadatas).ToList();
+                prevSegment = Tuple.Create(segment, metadataWithImplicit);
                 segmentMetadata.Add(prevSegment);
             }
 
