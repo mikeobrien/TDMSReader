@@ -58,14 +58,15 @@ namespace NationalInstruments.Tdms
             foreach (var groupName in metadata.Where(x => x.Path.Length > 1 && !groups.ContainsKey(x.Path[0])).Select(x => x.Path[0]))
                 groups.Add(groupName, new Group(groupName, new Dictionary<string, object>()));
         }
-
+        
         private static void LoadChannels(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata, Reader reader)
         {
-            var channelMetadata = metadata.Where(x => x.Path.Length == 2).
-                                           GroupBy(x => x.Path[1]).
-                                           Join(groups, x => x.First().Path[0], x => x.Key, (c, g) => Tuple.Create(g.Value, c));
+            var channelMetadata = metadata
+                .Where(x => x.Path.Length == 2)
+                .GroupBy(x => Tuple.Create(x.Path[0], x.Path[1]))
+                .Join(groups, x => x.First().Path[0], x => x.Key, (c, g) => Tuple.Create(g.Value, c));
             foreach (var channel in channelMetadata)
-                channel.Item1.Channels.Add(channel.Item2.First().Path[1], new Channel(channel.Item2.First().Path[1], 
+                channel.Item1.Channels.Add(channel.Item2.First().Path[1], new Channel(channel.Item2.First().Path[1],
                     channel.Item2.OrderByDescending(y => y.Properties.Count).First().Properties,
                     channel.Item2.Where(x => x.RawData.Count > 0).Select(x => x.RawData), reader));
         }
@@ -89,15 +90,18 @@ namespace NationalInstruments.Tdms
                     if (m.RawData.Count == 0 && prevSegment != null && m.Path.Length > 1)
                     {
                         // apply previous metadata if available
-                        var prevMetaData = prevSegment.Item2.First(md => md.Path.Length > 1 && md.Path[1] == m.Path[1]);
-                        m.RawData.Count = prevMetaData.RawData.Count;
-                        m.RawData.DataType = prevMetaData.RawData.DataType;
-                        m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
-                        m.RawData.Offset = segment.RawDataOffset + rawDataSize;
-                        m.RawData.IsInterleaved = prevMetaData.RawData.IsInterleaved;
-                        m.RawData.InterleaveStride = prevMetaData.RawData.InterleaveStride;
-                        m.RawData.Size = prevMetaData.RawData.Size;
-                        m.RawData.Dimension = prevMetaData.RawData.Dimension;
+                        var prevMetaData = prevSegment.Item2.FirstOrDefault(md => md.Path.Length > 1 && md.Path[1] == m.Path[1]);
+                        if (prevMetaData != null)
+                        {
+                            m.RawData.Count = prevMetaData.RawData.Count;
+                            m.RawData.DataType = prevMetaData.RawData.DataType;
+                            m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
+                            m.RawData.Offset = segment.RawDataOffset + rawDataSize;
+                            m.RawData.IsInterleaved = prevMetaData.RawData.IsInterleaved;
+                            m.RawData.InterleaveStride = prevMetaData.RawData.InterleaveStride;
+                            m.RawData.Size = prevMetaData.RawData.Size;
+                            m.RawData.Dimension = prevMetaData.RawData.Dimension;
+                        }
                     }
                     if (m.RawData.IsInterleaved && segment.NextSegmentOffset <= 0)
                     {
