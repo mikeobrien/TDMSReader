@@ -69,6 +69,19 @@ using (var tdms = new NationalInstruments.Tdms.File("Sample.tdms"))
     }
 }
 ```
+Contributors
+------------
+
+Huge thanks to Tommy Jakobsen for adding interleaved data support!
+
+| [![Tommy Jakobsen](http://www.gravatar.com/avatar/1.jpg?s=144)](https://github.com/tommyja) |
+|:---:|
+| [Tommy Jakobsen](https://github.com/tommyja) |
+	
+Props
+------------
+
+Thanks to [JetBrains](http://www.jetbrains.com/) for providing OSS licenses!
 
 ## License
 MIT License
