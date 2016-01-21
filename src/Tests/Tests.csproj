@@ -74,6 +74,9 @@
     <None Include="IncrementalMetaInformation.tdms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="IncrementalMetaInformationInterleavedData.tdms">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Sample.tdms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -26,8 +26,6 @@ namespace NationalInstruments.Tdms
 
         public IEnumerable<T> GetData<T>()
         {
-            if (_rawData.Any(x => x.IsInterleaved))
-                throw new NotSupportedException("This library does not support the reading of interleaved data.");
             return _rawData.SelectMany(_reader.ReadRawData).Select(value => (T)value);
         }
     }
