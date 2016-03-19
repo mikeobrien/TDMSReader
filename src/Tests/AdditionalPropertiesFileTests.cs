@@ -6,7 +6,7 @@ using Should;
 namespace Tests
 {
     [TestFixture]
-    public class AdditionalPropertiesFileTests 
+    public class AdditionalPropertiesFileTests
     {
         private File _file;
 

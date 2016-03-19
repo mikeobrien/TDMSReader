@@ -28,7 +28,7 @@ namespace NationalInstruments.Tdms
         }
 
         public IDictionary<string, object> Properties { get; private set; }
-        public IDictionary<string, Group> Groups { get; private set; } 
+        public IDictionary<string, Group> Groups { get; private set; }
 
         public File Open()
         {
@@ -39,26 +39,26 @@ namespace NationalInstruments.Tdms
             LoadChannels(Groups, metadata, reader);
             return this;
         }
-        
+
         private void LoadFile(IEnumerable<Reader.Metadata> metadata)
         {
             metadata.Where(x => x.Path.Length == 0)
                 .SelectMany(m => m.Properties).ToList()
-                .ForEach(x => Properties.Add(x));
+                .ForEach(x => Properties[x.Key] = x.Value);
         }
 
         private static void LoadGroups(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata)
         {
             var groupMetadata = metadata.Where(x => x.Path.Length == 1).
                                          GroupBy(x => x.Path[0], (k, r) => r.OrderByDescending(y => y.Properties.Count).First());
-            foreach (var group in groupMetadata) 
+            foreach (var group in groupMetadata)
                 groups.Add(group.Path[0], new Group(group.Path[0], group.Properties));
 
             // add implicit groups
             foreach (var groupName in metadata.Where(x => x.Path.Length > 1 && !groups.ContainsKey(x.Path[0])).Select(x => x.Path[0]))
                 groups.Add(groupName, new Group(groupName, new Dictionary<string, object>()));
         }
-        
+
         private static void LoadChannels(IDictionary<string, Group> groups, IEnumerable<Reader.Metadata> metadata, Reader reader)
         {
             var channelMetadata = metadata

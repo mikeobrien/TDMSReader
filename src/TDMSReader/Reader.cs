@@ -80,7 +80,7 @@ namespace NationalInstruments.Tdms
                 {
                     var key = _reader.ReadLengthPrefixedString();
                     var value = _reader.Read(_reader.ReadInt32());
-                    metadata.Properties.Add(key, value);
+                    metadata.Properties[key] = value;
                 }
                 metadatas.Add(metadata);
             }
@@ -176,7 +176,7 @@ namespace NationalInstruments.Tdms
         {
             public string[] Path { get; set; }
             public RawData RawData { get; set; }
-            public IDictionary<string, object> Properties { get; set; } 
+            public IDictionary<string, object> Properties { get; set; }
         }
 
         public class RawData
