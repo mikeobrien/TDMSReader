@@ -12,7 +12,7 @@
       <licenseUrl>https://github.com/mikeobrien/TDMSReader/blob/master/LICENSE</licenseUrl>
       <projectUrl>https://github.com/mikeobrien/TDMSReader</projectUrl>
       <owners>Mike O'Brien</owners>
-      <summary>Xml and json serializer for .NET and Mono.</summary>
+      <summary>National Instruments TDMS File Reader for .NET and Mono.</summary>
       <iconUrl>https://github.com/mikeobrien/TDMSReader/raw/master/misc/logo.png</iconUrl>
       <tags>tdms national instruments</tags>
    </metadata>
