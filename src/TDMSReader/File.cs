@@ -93,7 +93,7 @@ namespace NationalInstruments.Tdms
                         var prevMetaData = prevSegment.Item2.FirstOrDefault(md => md.Path.Length > 1 && md.Path[1] == m.Path[1]);
                         if (prevMetaData != null)
                         {
-                            m.RawData.Count = prevMetaData.RawData.Count;
+                            m.RawData.Count = segment.NextSegmentOffset >= 0 ? prevMetaData.RawData.Count : 0;
                             m.RawData.DataType = prevMetaData.RawData.DataType;
                             m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
                             m.RawData.Offset = segment.RawDataOffset + rawDataSize;
@@ -110,7 +110,6 @@ namespace NationalInstruments.Tdms
                               m.RawData.InterleaveStride
                             : (reader.FileSize - m.RawData.Offset + m.RawData.InterleaveStride - 1)/
                               m.RawData.InterleaveStride;
-
                     }
                     if (m.Path.Length > 1)
                     {
