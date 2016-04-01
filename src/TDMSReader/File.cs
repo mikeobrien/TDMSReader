@@ -73,12 +73,9 @@ namespace NationalInstruments.Tdms
 
         private static IEnumerable<Reader.Metadata> LoadMetadata(Reader reader)
         {
-
             var segments = GetSegments(reader).ToList();
 
-            var segmentMetadata = new List<Tuple<Reader.Segment, List<Reader.Metadata>>>();
-
-            Tuple<Reader.Segment, List<Reader.Metadata>> prevSegment = null;
+            var prevMetaDataLookup = new Dictionary<string, Dictionary<string, Reader.Metadata>>();
             foreach (var segment in segments)
             {
                 var metadatas = reader.ReadMetadata(segment);
@@ -87,10 +84,10 @@ namespace NationalInstruments.Tdms
 
                 foreach (var m in metadatas)
                 {
-                    if (m.RawData.Count == 0 && prevSegment != null && m.Path.Length > 1)
+                    if (m.RawData.Count == 0 && m.Path.Length > 1)
                     {
                         // apply previous metadata if available
-                        var prevMetaData = prevSegment.Item2.FirstOrDefault(md => md.Path.Length > 1 && md.Path[1] == m.Path[1]);
+                        var prevMetaData = prevMetaDataLookup[m.Path[0]][m.Path[1]];
                         if (prevMetaData != null)
                         {
                             m.RawData.Count = segment.NextSegmentOffset >= 0 ? prevMetaData.RawData.Count : 0;
@@ -151,11 +148,19 @@ namespace NationalInstruments.Tdms
                     }
                 }
                 var metadataWithImplicit = metadatas.Concat(implicitMetadatas).ToList();
-                prevSegment = Tuple.Create(segment, metadataWithImplicit);
-                segmentMetadata.Add(prevSegment);
+                foreach (var metadata in metadataWithImplicit)
+                {
+                    if (metadata.Path.Length == 2)
+                    {
+                        if (!prevMetaDataLookup.ContainsKey(metadata.Path[0]))
+                        {
+                            prevMetaDataLookup[metadata.Path[0]] = new Dictionary<string, Reader.Metadata>();
+                        }
+                        prevMetaDataLookup[metadata.Path[0]][metadata.Path[1]] = metadata;
+                    }
+                    yield return metadata;
+                }
             }
-
-            return segmentMetadata.SelectMany(st => st.Item2);
         }
 
         private static IEnumerable<Reader.Segment> GetSegments(Reader reader)
