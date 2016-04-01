@@ -90,7 +90,7 @@ namespace NationalInstruments.Tdms
                         var prevMetaData = prevMetaDataLookup[m.Path[0]][m.Path[1]];
                         if (prevMetaData != null)
                         {
-                            m.RawData.Count = segment.NextSegmentOffset >= 0 ? prevMetaData.RawData.Count : 0;
+                            m.RawData.Count = segment.TableOfContents.HasRawData ? prevMetaData.RawData.Count : 0;
                             m.RawData.DataType = prevMetaData.RawData.DataType;
                             m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
                             m.RawData.Offset = segment.RawDataOffset + rawDataSize;
