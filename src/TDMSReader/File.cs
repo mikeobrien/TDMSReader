@@ -78,6 +78,12 @@ namespace NationalInstruments.Tdms
             var prevMetaDataLookup = new Dictionary<string, Dictionary<string, Reader.Metadata>>();
             foreach (var segment in segments)
             {
+                if (!(segment.TableOfContents.ContainsNewObjects || 
+                    segment.TableOfContents.HasDaqMxData || 
+                    segment.TableOfContents.HasMetaData || 
+                    segment.TableOfContents.HasRawData)) {
+                    continue;
+                }
                 var metadatas = reader.ReadMetadata(segment);
                 long rawDataSize = 0;
                 long nextOffset = segment.RawDataOffset;
@@ -87,17 +93,20 @@ namespace NationalInstruments.Tdms
                     if (m.RawData.Count == 0 && m.Path.Length > 1)
                     {
                         // apply previous metadata if available
-                        var prevMetaData = prevMetaDataLookup[m.Path[0]][m.Path[1]];
-                        if (prevMetaData != null)
+                        if (prevMetaDataLookup.ContainsKey(m.Path[0]) && prevMetaDataLookup[m.Path[0]].ContainsKey(m.Path[1]))
                         {
-                            m.RawData.Count = segment.TableOfContents.HasRawData ? prevMetaData.RawData.Count : 0;
-                            m.RawData.DataType = prevMetaData.RawData.DataType;
-                            m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
-                            m.RawData.Offset = segment.RawDataOffset + rawDataSize;
-                            m.RawData.IsInterleaved = prevMetaData.RawData.IsInterleaved;
-                            m.RawData.InterleaveStride = prevMetaData.RawData.InterleaveStride;
-                            m.RawData.Size = prevMetaData.RawData.Size;
-                            m.RawData.Dimension = prevMetaData.RawData.Dimension;
+                            var prevMetaData = prevMetaDataLookup[m.Path[0]][m.Path[1]];
+                            if (prevMetaData != null)
+                            {
+                                m.RawData.Count = segment.TableOfContents.HasRawData ? prevMetaData.RawData.Count : 0;
+                                m.RawData.DataType = prevMetaData.RawData.DataType;
+                                m.RawData.ClrDataType = prevMetaData.RawData.ClrDataType;
+                                m.RawData.Offset = segment.RawDataOffset + rawDataSize;
+                                m.RawData.IsInterleaved = prevMetaData.RawData.IsInterleaved;
+                                m.RawData.InterleaveStride = prevMetaData.RawData.InterleaveStride;
+                                m.RawData.Size = prevMetaData.RawData.Size;
+                                m.RawData.Dimension = prevMetaData.RawData.Dimension;
+                            }
                         }
                     }
                     if (m.RawData.IsInterleaved && segment.NextSegmentOffset <= 0)
