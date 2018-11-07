@@ -42,11 +42,46 @@ namespace NationalInstruments.Tdms
                 case DataType.String: return Encoding.UTF8.GetString(reader.ReadBytes(reader.ReadInt32()));
                 case DataType.Boolean: return reader.ReadBoolean();
                 case DataType.TimeStamp:
-                    var milliseconds = (int)((reader.ReadUInt64() / (float)ulong.MaxValue) * 1000);
                     return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                        .AddSeconds(reader.ReadUInt64() / (double)ulong.MaxValue)       //fixed truncate error in old code 
                         .AddSeconds(reader.ReadInt64())
-                        .AddMilliseconds(milliseconds)
                         .ToLocalTime(); 
+                default: throw new ArgumentException("Unknown data type " + dataType, "dataType");
+            }
+        }
+    }
+
+    public static class BinaryWriterExtensions
+    {
+        public static void Write(this BinaryWriter writer, int dataType, object data)
+        {
+            switch (dataType)
+            {
+                case DataType.Empty: break;
+                case DataType.Void: writer.Write((byte)0); break;
+                case DataType.Integer8: writer.Write((sbyte)data); break;
+                case DataType.Integer16: writer.Write((Int16)data); break;
+                case DataType.Integer32: writer.Write((Int32)data); break;
+                case DataType.Integer64: writer.Write((Int64)data); break;
+                case DataType.UnsignedInteger8: writer.Write((byte)data); break;
+                case DataType.UnsignedInteger16: writer.Write((UInt16)data); break;
+                case DataType.UnsignedInteger32: writer.Write((UInt32)data); break;
+                case DataType.UnsignedInteger64: writer.Write((UInt16)data); break;
+                case DataType.SingleFloat:
+                case DataType.SingleFloatWithUnit: writer.Write((float)data); break;
+                case DataType.DoubleFloat:
+                case DataType.DoubleFloatWithUnit: writer.Write((double)data); break;
+                case DataType.String:
+                    byte[] bytes = Encoding.UTF8.GetBytes((string)data);
+                    writer.Write((Int32)bytes.Length);
+                    writer.Write(bytes);
+                    break;
+                case DataType.Boolean: writer.Write((bool)data); break;
+                case DataType.TimeStamp:
+                    var t = (((DateTime)data).ToUniversalTime() - new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+                    writer.Write((UInt64)((t.TotalSeconds % 1) * ulong.MaxValue));
+                    writer.Write((Int64)t.TotalSeconds);
+                    break;
                 default: throw new ArgumentException("Unknown data type " + dataType, "dataType");
             }
         }
