@@ -24,6 +24,8 @@ namespace NationalInstruments.Tdms
         public Type DataType { get { return _rawData.Select(x => x.ClrDataType).FirstOrDefault(); } }
         public IDictionary<string, object> Properties { get; private set; }
 
+        public IEnumerable<Reader.RawData> RawData { get { return _rawData; } }
+
         public IEnumerable<T> GetData<T>()
         {
             return _rawData.SelectMany(_reader.ReadRawData).Select(value => (T)value);
