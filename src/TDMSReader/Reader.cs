@@ -50,7 +50,7 @@ namespace NationalInstruments.Tdms
             var objectCount = _reader.ReadInt32();
             var metadatas = new List<Metadata>();
             var rawDataOffset = segment.RawDataOffset;
-            bool isInterleaved = false;
+            bool isInterleaved = segment.TableOfContents.RawDataIsInterleaved;
             int interleaveStride = 0;
             for (var x = 0; x < objectCount; x++)
             {
@@ -69,11 +69,15 @@ namespace NationalInstruments.Tdms
                     metadata.RawData.Count = _reader.ReadInt64();
                     metadata.RawData.Size = rawDataIndexLength == 28 ? _reader.ReadInt64() :
                                                 DataType.GetArrayLength(metadata.RawData.DataType, metadata.RawData.Count);
-                    rawDataOffset += metadata.RawData.Size;
+                    if (isInterleaved)
+                    {
+                        //fixed error. The interleave stride is the sum of all channel (type) dataSizes
+                        rawDataOffset += DataType.GetLength(metadata.RawData.DataType);
+                        interleaveStride += DataType.GetLength(metadata.RawData.DataType);
+                    }
+                    else
+                        rawDataOffset += metadata.RawData.Size;
                 }
-                isInterleaved = isInterleaved || metadata.RawData.IsInterleaved;
-                if (isInterleaved)
-                    interleaveStride += (int)metadata.RawData.Size;
                 var propertyCount = _reader.ReadInt32();
                 metadata.Properties = new Dictionary<string, object>();
                 for (var y = 0; y < propertyCount; y++)
@@ -104,7 +108,7 @@ namespace NationalInstruments.Tdms
         public IEnumerable<object> ReadRawData(RawData rawData)
         {
             if (rawData.IsInterleaved)
-                return ReadRawInterleaved(rawData.Offset, rawData.Count, rawData.DataType, rawData.InterleaveStride - (int)rawData.Size);
+                return ReadRawInterleaved(rawData.Offset, rawData.Count, rawData.DataType, rawData.InterleaveStride - DataType.GetLength(rawData.DataType));    //fixed error
             return rawData.DataType == DataType.String ? ReadRawStrings(rawData.Offset, rawData.Count) :
                                                          ReadRawFixed(rawData.Offset, rawData.Count, rawData.DataType);
         }
