@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using NUnit.Framework;
 using NationalInstruments.Tdms;
@@ -12,7 +13,7 @@ namespace Tests
         public void Init()
         {
             //we'll set the cwd to the project, so that the Visual Studio Test framework can find the test files.
-            System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName( this.GetType().Assembly.Location);
+            Environment.CurrentDirectory = System.IO.Path.GetDirectoryName( this.GetType().Assembly.Location);
         }
 
         private bool IsEqual(IDictionary<string, object> dic1, IDictionary<string, object> dic2)
@@ -98,6 +99,118 @@ namespace Tests
             TestSampleFile(Constants.AdditionalPropertiesFile);
             TestSampleFile(Constants.IncrementalMetaInformation);
             TestSampleFile(Constants.IncrementalMetaInformationInterleavedData);    //interleaved data is not really supported in re-write. If data is interleaved, it'll be converted to non-interleaved
+        }
+
+        [Test]
+        public void Create1ChannelSinusFile()
+        {
+            //file
+            string tmp_file = System.IO.Path.ChangeExtension(System.IO.Path.GetTempFileName(), "tdms");
+
+            //create base information
+            WriteSegment f = new WriteSegment(tmp_file);
+            f.Header.TableOfContents.HasRawData = true;
+            f.MetaData.Add(WriteSegment.GenerateStandardRoot("See my Sine", "BigFoot48", "Test Dataset", DateTime.Now));
+            f.MetaData.Add(WriteSegment.GenerateStandardGroup("Generated Harmonics", "Collection of test sines"));
+            Reader.Metadata channel_meta = WriteSegment.GenerateStandardChannel("Generated Harmonics", "Sine 1", "Calculated with A * Math.Sin(t/(2*Math.PI))", "Bannanas", "s", "Time", DateTime.Now, 1/1000.0, typeof(double), 0);
+            f.MetaData.Add(channel_meta);
+
+            //open for raw
+            f.Open();
+
+            //puke up our sinus curve
+            int dataCount = 0;
+            double A = 100.0;
+            double t = 0;
+            double dT = 1 / 1000.0;
+            System.IO.BinaryWriter w = new System.IO.BinaryWriter(f.BaseStream);
+            for (int i = 0; i < 100000; i++)
+            {
+                w.Write(A * Math.Sin(t / (2*Math.PI)));
+                t += dT;
+                dataCount++;
+            }
+
+            //adjust actual data count. (Let's assume that we did't know this count before we started streaming.)
+            channel_meta.RawData.Count = dataCount;
+
+            //close up
+            f.Close();
+
+            //open it (with the reader)
+            var tdms = new File(tmp_file).Open();
+
+            //validate the sinus
+            t = 0;
+            foreach (double v in tdms.Groups["Generated Harmonics"].Channels["Sine 1"].GetData<double>())
+            {
+                double y = A * Math.Sin(t / (2 * Math.PI));
+                Assert.IsTrue(y == v);
+                t += dT;
+            }
+        }
+
+        [Test]
+        public void Create2ChannelInterleavedSinusFile()
+        {
+            //file
+            string tmp_file = System.IO.Path.ChangeExtension(System.IO.Path.GetTempFileName(), "tdms");
+
+            //create base information
+            WriteSegment f = new WriteSegment(tmp_file);
+            f.Header.TableOfContents.HasRawData = true;
+            f.Header.TableOfContents.RawDataIsInterleaved = true;
+            f.MetaData.Add(WriteSegment.GenerateStandardRoot("See my Sine", "BigFoot48", "Test Dataset", DateTime.Now));
+            f.MetaData.Add(WriteSegment.GenerateStandardGroup("Generated Harmonics", "Collection of test sines"));
+            Reader.Metadata channel1_meta = WriteSegment.GenerateStandardChannel("Generated Harmonics", "Sine 1", "Calculated with A * Math.Sin(t/(2*Math.PI))", "Bannanas", "s", "Time", DateTime.Now, 1 / 1000.0, typeof(double), 0);
+            f.MetaData.Add(channel1_meta);
+            Reader.Metadata channel2_meta = WriteSegment.GenerateStandardChannel("Generated Harmonics", "Sine 2", "Calculated with A2 * Math.Sin(t/(2*Math.PI) + f)", "Bannanas", "s", "Time", DateTime.Now, 1 / 1000.0, typeof(double), 0);
+            f.MetaData.Add(channel2_meta);
+
+            //open for raw
+            f.Open();
+
+            //puke up our sinus curve
+            int dataCount = 0;
+            double A = 100.0;
+            double A2 = 80.0;
+            double t = 0;
+            double dT = 1 / 1000.0;
+            double ph = 0.1;
+            System.IO.BinaryWriter w = new System.IO.BinaryWriter(f.BaseStream);
+            for (int i = 0; i < 100000; i++)
+            {
+                w.Write(A * Math.Sin(t / (2 * Math.PI)));
+                w.Write(A2 * Math.Sin(t / (2 * Math.PI) + ph));
+                t += dT;
+                dataCount++;
+            }
+
+            //adjust actual data count. (Let's assume that we did't know this count before we started streaming.)
+            channel1_meta.RawData.Count = dataCount;
+            channel2_meta.RawData.Count = dataCount;
+
+            //close up
+            f.Close();
+
+            //open it (with the reader)
+            var tdms = new File(tmp_file).Open();
+
+            //validate the sinus
+            t = 0;
+            foreach (double v in tdms.Groups["Generated Harmonics"].Channels["Sine 1"].GetData<double>())
+            {
+                double y = A * Math.Sin(t / (2 * Math.PI));
+                Assert.IsTrue(y == v);
+                t += dT;
+            }
+            t = 0;
+            foreach (double v in tdms.Groups["Generated Harmonics"].Channels["Sine 2"].GetData<double>())
+            {
+                double y = A2 * Math.Sin(t / (2 * Math.PI) + ph);
+                Assert.IsTrue(y == v);
+                t += dT;
+            }
         }
     }
 }
