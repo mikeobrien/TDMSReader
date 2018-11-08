@@ -188,6 +188,52 @@ namespace NationalInstruments.Tdms
         {
             Close();
         }
+
+        #region " Helper functions for creating new TDMS files (with properties) "
+
+        public static Reader.Metadata GenerateStandardProperties(string name, string description, params string[] path)
+        {
+            Reader.Metadata meta = new Reader.Metadata();
+            meta.Path = path;
+            meta.Properties = new Dictionary<string, object>();
+            if (!string.IsNullOrEmpty(name)) meta.Properties.Add("name", name);
+            if (!string.IsNullOrEmpty(description)) meta.Properties.Add("description", description);
+            return meta;
+        }
+
+        public static Reader.Metadata GenerateStandardRoot(string name, string author, string description, DateTime datetime)
+        {
+            Reader.Metadata meta = GenerateStandardProperties(name, description, new string[0]);
+            if (!string.IsNullOrEmpty(author)) meta.Properties.Add("author", author);
+            if (datetime != new DateTime(1, 1, 1)) meta.Properties.Add("datetime", datetime);
+            return meta;
+        }
+
+        public static Reader.Metadata GenerateStandardGroup(string name, string description)
+        {
+            Reader.Metadata meta = GenerateStandardProperties(name, description, name);
+            return meta;
+        }
+
+        public static Reader.Metadata GenerateStandardChannel(string groupName, string name, string description, string yUnitString, string xUnitString, string xName, DateTime startTime, double increment, Type dataType, int dataCount, int stringBlobLength = 0)
+        {
+            Reader.Metadata meta = GenerateStandardProperties(name, description, groupName, name);
+            if(!string.IsNullOrEmpty(yUnitString)) meta.Properties.Add("unit_string", yUnitString);
+            if(!string.IsNullOrEmpty(xUnitString)) meta.Properties.Add("wf_xunit_string", xUnitString);
+            if(!string.IsNullOrEmpty(xName)) meta.Properties.Add("wf_xname", xName);
+            if(startTime != new DateTime(1,1,1)) meta.Properties.Add("wf_start_time", startTime);
+            if(increment != 0) meta.Properties.Add("wf_increment", increment);
+
+            meta.RawData = new Reader.RawData();
+            meta.RawData.DataType = DataType.GetDataType(Activator.CreateInstance(dataType));
+            meta.RawData.Count = dataCount;
+            meta.RawData.Dimension = 1; //always 1
+            if (dataType == typeof(string)) meta.RawData.Size = stringBlobLength;
+
+            return meta;
+        }
+
+        #endregion  
     }
 }
  
