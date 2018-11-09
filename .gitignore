@@ -12,6 +12,7 @@ aspnet_client
 .DS_Store
 Thumbs.db
 node_modules
+.vs
 
 # Nuget sources
 src/packages/*/src/*
