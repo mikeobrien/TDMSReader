@@ -40,6 +40,80 @@ namespace NationalInstruments.Tdms
             return this;
         }
 
+        /// <summary>
+        /// This will re-write the TDMS file. Mostly used for write demonstration. Although, this will also defragment the file. 
+        /// </summary>
+        /// <param name="path"></param>
+        public void ReWrite(string path)
+        {
+            using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+                ReWrite(stream);
+        }
+
+        /// <summary>
+        /// This will re-write the TDMS file. Mostly used for write demonstration. Although, this will also defragment the file. 
+        /// </summary>
+        /// <param name="stream"></param>
+        public void ReWrite(Stream stream)
+        {
+            WriteSegment segment = new WriteSegment(stream);
+            segment.Header.TableOfContents.HasRawData = Groups.SelectMany(g => g.Value.Channels.Values, (g, c) => c.HasData).Any();
+            //when we re-write the file, no data shall be interleaved. (It's an all or nothing situation, with only 1 segment)
+            //segment.Header.TableOfContents.RawDataIsInterleaved = Groups.SelectMany(g => g.Value.Channels.Values, (g, c) => c.RawData.First().IsInterleaved).Any();
+
+            //Top level
+            Reader.Metadata m = new Reader.Metadata();
+            m.Path = new string[0];
+            m.Properties = Properties;
+            segment.MetaData.Add(m);
+
+            //Groups
+            foreach(KeyValuePair<string, Group> group in Groups)
+            {
+                m = new Reader.Metadata();
+                m.Path = new string[] { group.Key };
+                m.Properties = group.Value.Properties;
+                segment.MetaData.Add(m);
+
+                //Channels
+                foreach (KeyValuePair<string, Channel> channel in group.Value.Channels)
+                {
+                    Reader.RawData[] raws = channel.Value.RawData.ToArray();
+
+                    //Add first part
+                    m = new Reader.Metadata();
+                    m.Path = new string[] { group.Key, channel.Key };
+                    m.Properties = channel.Value.Properties;
+                    m.RawData = raws?[0];
+                    segment.MetaData.Add(m);
+
+                    //Add the other parts (if any)
+                    for(int i = 1; i < raws?.Length; i++)
+                    {
+                        m = new Reader.Metadata();
+                        m.Path = new string[] { group.Key, channel.Key };
+                        m.RawData = raws[i];
+                        segment.MetaData.Add(m);
+                    }
+                }
+            }
+
+            //Write all raw data
+            Writer writer = segment.Open();
+            var reader = new Reader(_stream.Value);
+            foreach (KeyValuePair<string, Group> group in Groups)
+                foreach (KeyValuePair<string, Channel> channel in group.Value.Channels)
+                    foreach (Reader.RawData raw in channel.Value.RawData)
+                    {
+                        var data = reader.ReadRawData(raw);
+                        raw.IsInterleaved = false;  //when we re-write the file, no data shall be interleaved
+                        writer.WriteRawData(raw, data);
+                    }
+
+            //close up
+            segment.Close();
+        }
+
         private void LoadFile(IEnumerable<Reader.Metadata> metadata)
         {
             metadata.Where(x => x.Path.Length == 0)

@@ -77,5 +77,24 @@ namespace NationalInstruments.Tdms
                 default: throw new Exception("Unknown data type " + dataType);
             }
         }
+
+        public static int GetDataType(object value)
+        {
+            if (value == null) return Void;
+            else if (value.GetType() == typeof(bool)) return Boolean;
+            else if (value.GetType() == typeof(sbyte)) return Integer8;
+            else if (value.GetType() == typeof(Int16)) return Integer16;
+            else if (value.GetType() == typeof(Int32)) return Integer32;
+            else if (value.GetType() == typeof(Int64)) return Integer64;
+            else if (value.GetType() == typeof(byte)) return UnsignedInteger8;
+            else if (value.GetType() == typeof(UInt16)) return UnsignedInteger16;
+            else if (value.GetType() == typeof(UInt32)) return UnsignedInteger32;
+            else if (value.GetType() == typeof(UInt64)) return UnsignedInteger64;
+            else if (value.GetType() == typeof(float)) return SingleFloat;
+            else if (value.GetType() == typeof(double)) return DoubleFloat;
+            else if (value.GetType() == typeof(string)) return String;
+            else if (value.GetType() == typeof(DateTime)) return TimeStamp;
+            else throw new Exception("Unknown data type " + value.GetType());
+        }
     }
 }

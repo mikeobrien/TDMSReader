@@ -63,6 +63,7 @@
     <Compile Include="FileTests.cs" />
     <Compile Include="IncrementalMetaDataTests.cs" />
     <Compile Include="PropertyRewrittenTests.cs" />
+    <Compile Include="WriteTests.cs" />
     <Compile Include="SampleUsage.cs" />
     <Compile Include="ReaderRawDataTests.cs" />
     <Compile Include="BinaryReaderExtensionsTests.cs" />
