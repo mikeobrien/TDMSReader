@@ -49,8 +49,9 @@ namespace Tests
         [Test]
         public void Should_Have_Timestamp()
         {
-            var expectedDate = new DateTime(2013, 09, 04, 11, 25, 32, 621, DateTimeKind.Utc).ToLocalTime();
-            _file.Properties["Timestamp"].ShouldEqual(expectedDate);
+            var expectedDate = new DateTime(2013, 09, 04, 11, 25, 32, 622, DateTimeKind.Utc).ToLocalTime();
+            var actualDate = _file.Properties["Timestamp"];
+            actualDate.ShouldEqual(expectedDate);
         }
     }
 }

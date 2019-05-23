@@ -26,7 +26,7 @@ gulp.task('build', ['assemblyInfo'], function() {
     return gulp
         .src('**/*.sln')
         .pipe(msbuild({
-            toolsVersion: 4.0,
+            toolsVersion: 15.0,
             targets: ['Clean', 'Build'],
             errorOnFail: true,
             stdout: true
@@ -37,7 +37,12 @@ gulp.task('test', ['build'], function () {
     return gulp
         .src(['**/bin/**/*Tests.dll'], { read: false })
         .pipe(nunit({
-            teamcity: true
+            executable: 'nunit3-console.exe',
+            options: {
+                framework: 'net-4.5',
+                where: 'cat != Performance',
+                teamcity: true
+            }
         }));
 });
 
@@ -55,5 +60,8 @@ gulp.task('nuget-package', ['test'], function() {
 });
 
 gulp.task('nuget-push', ['nuget-package'], function() {
-    return Nuget({ apiKey: args.nugetApiKey }).push('*.nupkg');
+    return Nuget({ 
+        apiKey: args.nugetApiKey, 
+        source: ['https://www.nuget.org/api/v2/package'] 
+    }).push('*.nupkg');
 });
