@@ -123,7 +123,6 @@ namespace NationalInstruments.Tdms
         private Writer _writer;
         private bool _isOpen = false;
         private long _startOffset;
-        private long _rawOffset;
         private bool _ownsStream = false;
 
         public Stream BaseStream { get { return _writer.BaseStream; } }
@@ -160,7 +159,7 @@ namespace NationalInstruments.Tdms
             _startOffset = BaseStream.Position;
             _writer.WriteSegment(_startOffset, Header);
             _writer.WriteMetadata(MetaData);
-            _rawOffset = BaseStream.Position;
+            Header.RawDataOffset = BaseStream.Position - Reader.Segment.Length - _startOffset;
 
             _isOpen = true;
             return _writer;
@@ -172,8 +171,7 @@ namespace NationalInstruments.Tdms
 
             //Re-write raw and next offset
             long end_offset = BaseStream.Position;
-            Header.NextSegmentOffset = end_offset;
-            Header.RawDataOffset = _rawOffset - Reader.Segment.Length;
+            Header.NextSegmentOffset = end_offset - _startOffset - Reader.Segment.Length;
             _writer.WriteSegment(_startOffset, Header);
             _writer.WriteMetadata(MetaData);     //meta data contains byte count. These should be updated before 'closing'
             BaseStream.Seek(end_offset, SeekOrigin.Begin);  //set cursor at end
@@ -191,19 +189,19 @@ namespace NationalInstruments.Tdms
 
         #region " Helper functions for creating new TDMS files (with properties) "
 
-        public static Reader.Metadata GenerateStandardProperties(string name, string description, params string[] path)
+        public static Reader.Metadata GenerateStandardProperties(string description, params string[] path)
         {
             Reader.Metadata meta = new Reader.Metadata();
             meta.Path = path;
             meta.Properties = new Dictionary<string, object>();
-            if (!string.IsNullOrEmpty(name)) meta.Properties.Add("name", name);
             if (!string.IsNullOrEmpty(description)) meta.Properties.Add("description", description);
             return meta;
         }
 
         public static Reader.Metadata GenerateStandardRoot(string name, string author, string description, DateTime datetime)
         {
-            Reader.Metadata meta = GenerateStandardProperties(name, description, new string[0]);
+            Reader.Metadata meta = GenerateStandardProperties(description, new string[0]);
+            if (!string.IsNullOrEmpty(name)) meta.Properties.Add("name", name);
             if (!string.IsNullOrEmpty(author)) meta.Properties.Add("author", author);
             if (datetime != new DateTime(1, 1, 1)) meta.Properties.Add("datetime", datetime);
             return meta;
@@ -211,13 +209,13 @@ namespace NationalInstruments.Tdms
 
         public static Reader.Metadata GenerateStandardGroup(string name, string description)
         {
-            Reader.Metadata meta = GenerateStandardProperties(name, description, name);
+            Reader.Metadata meta = GenerateStandardProperties( description, name);
             return meta;
         }
 
         public static Reader.Metadata GenerateStandardChannel(string groupName, string name, string description, string yUnitString, string xUnitString, string xName, DateTime startTime, double increment, Type dataType, int dataCount, int stringBlobLength = 0)
         {
-            Reader.Metadata meta = GenerateStandardProperties(name, description, groupName, name);
+            Reader.Metadata meta = GenerateStandardProperties( description, groupName, name);
             if(!string.IsNullOrEmpty(yUnitString)) meta.Properties.Add("unit_string", yUnitString);
             if(!string.IsNullOrEmpty(xUnitString)) meta.Properties.Add("wf_xunit_string", xUnitString);
             if(!string.IsNullOrEmpty(xName)) meta.Properties.Add("wf_xname", xName);
