@@ -1,8 +1,5 @@
-language: c
- 
-install:
-  - sudo apt-get install mono-devel mono-gmcs nunit-console
- 
+language: csharp
+mono: none
+dotnet: 2.0.0
 script:
-  - xbuild ./src/TDMSReader.xbuild
-  - nunit-console ./src/Tests/bin/Debug/Tests.dll
+  - dotnet test
