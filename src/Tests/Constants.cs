@@ -1,14 +1,17 @@
-﻿using System.IO;
+﻿using NUnit.Framework;
+using System;
+using System.IO;
 
 namespace Tests
 {
     public class Constants
     {
-        public const string SampleFile = "Sample.tdms";
-        public const string PropertyRewrittenFile = "PropertyRewritten.tdms";
-        public const string AdditionalPropertiesFile = "AdditionalProperties.tdms";
-        public const string IncrementalMetaInformation = "IncrementalMetaInformation.tdms";
-        public const string IncrementalMetaInformationInterleavedData = "IncrementalMetaInformationInterleavedData.tdms";
+        private static readonly string TestDirectory = TestContext.CurrentContext.TestDirectory;
+        public static readonly string SampleFile = Path.Combine(TestDirectory, @"Sample.tdms");
+        public static readonly string PropertyRewrittenFile = Path.Combine(TestDirectory, @"PropertyRewritten.tdms");
+        public static readonly string AdditionalPropertiesFile = Path.Combine(TestDirectory, @"AdditionalProperties.tdms");
+        public static readonly string IncrementalMetaInformation = Path.Combine(TestDirectory, @"IncrementalMetaInformation.tdms");
+        public static readonly string IncrementalMetaInformationInterleavedData = Path.Combine(TestDirectory, @"IncrementalMetaInformationInterleavedData.tdms");
 
         public static Stream CreateStream()
         {

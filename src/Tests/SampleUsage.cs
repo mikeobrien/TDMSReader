@@ -7,7 +7,7 @@ namespace Tests
     [TestFixture]
     public class SampleUsage
     {
-        [Test, Ignore]
+        [Test, Ignore("")]
         public void Create_Overview_Text_File()
         {
             using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\temp\tdms.overview.txt")))
@@ -50,7 +50,7 @@ namespace Tests
             }
         }
 
-        [Test, Ignore]
+        [Test, Ignore("")]
         public void Create_Channel_Export_Text_File()
         {
             using (var output = new System.IO.StreamWriter(System.IO.File.Create(@"D:\temp\tdms.channel.export.txt")))

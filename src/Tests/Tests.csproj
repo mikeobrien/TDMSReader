@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40</TargetFrameworks>
+    <TargetFrameworks>net45</TargetFrameworks>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -27,10 +27,12 @@
     <AssemblySearchPaths Condition="'$(BaseFrameworkPathOverrideForMono)' != ''">$(FrameworkPathOverride)/Facades;$(AssemblySearchPaths)</AssemblySearchPaths>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="NSubstitute" Version="1.1.0" />
-    <PackageReference Include="NUnit" Version="2.5.10.11092" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
+    <PackageReference Include="NSubstitute" Version="4.2.1" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="NUnitTestAdapter" Version="2.2.0" />
-    <PackageReference Include="Should" Version="1.1.12" />
+    <PackageReference Include="Should" Version="1.1.20" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TDMSReader\TDMSReader.csproj" />
