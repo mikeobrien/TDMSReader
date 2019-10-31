@@ -2,5 +2,5 @@ language: csharp
 mono: latest
 dotnet: 2.0.0
 script:
-  - cd src
+  - cd src/Tests
   - dotnet test
