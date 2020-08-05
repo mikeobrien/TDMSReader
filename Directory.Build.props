@@ -1,0 +1,18 @@
+<Project>
+
+  <PropertyGroup>
+    <Product>TDMS Reader</Product>
+    <Copyright>Copyright © 2011 Ultraviolet Catastrophe</Copyright>
+    <Company>Ultraviolet Catastrophe</Company>
+    <RepositoryUrl>https://github.com/mikeobrien/TDMSReader</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
